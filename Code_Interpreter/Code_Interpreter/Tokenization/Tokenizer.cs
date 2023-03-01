@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Perl_Interpreter.Tokenization
 {
     public class Tokenizer
