@@ -36,5 +36,11 @@ namespace Code_Interpreter
         {
 
         }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtInput.Clear();
+            lblOutput.Text = "";
+        }
     }
 }

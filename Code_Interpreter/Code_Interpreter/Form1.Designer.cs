@@ -79,6 +79,7 @@
             this.btnClear.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnClear.Name = "btnClear";
             this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // Form1
             // 
