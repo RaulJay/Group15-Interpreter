@@ -34,6 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnInterpret = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtInput
@@ -72,11 +73,19 @@
             this.btnInterpret.Name = "btnInterpret";
             this.btnInterpret.UseVisualStyleBackColor = true;
             // 
+            // btnClear
+            // 
+            resources.ApplyResources(this.btnClear, "btnClear");
+            this.btnClear.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightBlue;
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnInterpret);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -96,6 +105,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnInterpret;
+        private System.Windows.Forms.Button btnClear;
     }
 }
 
