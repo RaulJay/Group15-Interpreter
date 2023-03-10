@@ -42,5 +42,10 @@ namespace Code_Interpreter
             txtInput.Clear();
             lblOutput.Text = "";
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
