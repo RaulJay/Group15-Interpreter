@@ -1,4 +1,4 @@
-﻿grammar Tokens;
+﻿grammar Simple;
 
 // Define the tokens
 INT: 'INT';
@@ -36,7 +36,6 @@ code: statement*;
 statement: variable_declaration
           | assignment_statement
           | display_statement
-          | comment
           ;
 
 variable_declaration: data_type identifier (ASSIGN expression)? SEMI;
@@ -64,7 +63,6 @@ literal: INT_LITERAL
 
 display_statement: DISPLAY expression (COMMA expression)* SEMI;
 
-comment: '#' (~[\r\n])*;
 
 // Define the lexer rules
 INT_LITERAL: DIGIT+;
