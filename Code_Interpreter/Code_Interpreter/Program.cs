@@ -1,5 +1,4 @@
-﻿using Perl_Interpreter.Tokenization;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Code_Interpreter
 {
@@ -9,8 +8,6 @@ namespace Code_Interpreter
         public static void Main(string[] args)
         {
             string input = " Hello world";
-            Tokenizer tokenizer = new Tokenizer(input);
-            tokenizer.print();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
