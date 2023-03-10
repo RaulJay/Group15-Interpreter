@@ -39,16 +39,16 @@
             // 
             // txtInput
             // 
-            resources.ApplyResources(this.txtInput, "txtInput");
             this.txtInput.BackColor = System.Drawing.Color.PaleGreen;
+            resources.ApplyResources(this.txtInput, "txtInput");
             this.txtInput.Name = "txtInput";
             this.txtInput.TextChanged += new System.EventHandler(this.txtInput_TextChanged);
             // 
             // lblOutput
             // 
-            resources.ApplyResources(this.lblOutput, "lblOutput");
             this.lblOutput.BackColor = System.Drawing.Color.Wheat;
             this.lblOutput.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            resources.ApplyResources(this.lblOutput, "lblOutput");
             this.lblOutput.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.lblOutput.Name = "lblOutput";
             this.lblOutput.Click += new System.EventHandler(this.lblOutput_Click);
@@ -68,18 +68,18 @@
             // 
             // btnInterpret
             // 
+            this.btnInterpret.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             resources.ApplyResources(this.btnInterpret, "btnInterpret");
-            this.btnInterpret.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnInterpret.Name = "btnInterpret";
             this.btnInterpret.UseVisualStyleBackColor = true;
             // 
             // btnClear
             // 
+            this.btnClear.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             resources.ApplyResources(this.btnClear, "btnClear");
-            this.btnClear.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnClear.Name = "btnClear";
             this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
