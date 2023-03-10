@@ -39,12 +39,9 @@
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
     </Reference>
-<<<<<<< HEAD
     <Reference Include="Antlr4.Runtime.Standard, Version=4.12.0.0, Culture=neutral, PublicKeyToken=e78b2c5abd1fcb3f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.Standard.4.12.0\lib\net45\Antlr4.Runtime.Standard.dll</HintPath>
     </Reference>
-=======
->>>>>>> d7c54840ac88c2f99d43b51d857ccfe9ab062872
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
