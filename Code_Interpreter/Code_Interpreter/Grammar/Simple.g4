@@ -1,4 +1,4 @@
-﻿grammar Simple;
+﻿grammar CodeGrammar;
 
 // Define the tokens
 INT: 'INT';
