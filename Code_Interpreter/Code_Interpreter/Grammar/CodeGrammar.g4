@@ -4,7 +4,6 @@
 INT: 'INT';
 CHAR: 'CHAR';
 BOOL: 'BOOL';
-FLOAT: 'FLOAT';
 TRUE: 'TRUE';
 FALSE: 'FALSE';
 DISPLAY: 'DISPLAY:';
@@ -30,27 +29,22 @@ LTE: '<=';
 AND: '&';
 OR: '|';
 NOT: '!';
-NEWLINE: '\r'? '\n'| '\r';
-WHITESPACE: [\t\r\n]+ -> skip;
 
 // Define the grammar rules
-code: statement* EOF;
+code: statement*;
 
-statement: (variable_declaration
+statement: variable_declaration
           | assignment_statement
           | display_statement
-          | if_block)
-          NEWLINE
           ;
 
 variable_declaration: data_type identifier (ASSIGN expression)? SEMI;
 
 data_type: INT | CHAR | BOOL;
 
-identifier: ID /*[a-zA-Z_][a-zA-Z0-9_] */;
+identifier: ID;
 
 assignment_statement: identifier ASSIGN expression SEMI;
-
 
 expression: literal
            | identifier
@@ -63,18 +57,11 @@ expression: literal
 
 literal: INT_LITERAL
         | CHAR_LITERAL
-        | FLOAT
-        | bool
+        | TRUE
+        | FALSE
         ;
 
-bool: TRUE | FALSE;
-
 display_statement: DISPLAY expression (COMMA expression)* SEMI;
-
-if_block: 'IF' LPAREN expression RPAREN block ('ELSE' ifelse_block)?;
-
-block: 'update me later hehe';
-ifelse_block: block | if_block;
 
 
 // Define the lexer rules
