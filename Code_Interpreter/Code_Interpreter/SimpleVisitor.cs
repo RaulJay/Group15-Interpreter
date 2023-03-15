@@ -1,4 +1,5 @@
-﻿using Code_Interpreter.Content;
+﻿using Antlr4.Runtime.Misc;
+using Code_Interpreter.Content;
 
 namespace Code_Interpreter
 {
@@ -102,5 +103,19 @@ namespace Code_Interpreter
             return variables[identifier];
         }
 
+        public override object VisitExpression([NotNull] SimpleParser.ExpressionContext context)
+        {
+            return base.VisitExpression(context);
+        }
+
+        public override object VisitData_type([NotNull] SimpleParser.Data_typeContext context)
+        {
+            return base.VisitData_type(context);
+        }
+
+        public override object VisitStatement(SimpleParser.StatementContext context)
+        {
+            return true;
+        }
     }
 }
