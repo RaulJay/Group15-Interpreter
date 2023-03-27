@@ -3,7 +3,7 @@ using Interpreter.Grammar;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace Interpreter
+namespace Interpreter.Visitors
 {
     internal class CodeVisitor : CodeGrammarBaseVisitor<object>
     {
@@ -11,21 +11,31 @@ namespace Interpreter
 
         public override object VisitCode([NotNull] CodeGrammarParser.CodeContext context)
         {
+            string code = context.GetText().Trim();
+            if (code.StartsWith("BEGIN CODE") && code.EndsWith("END CODE"))
+            {
+                Console.WriteLine("Success");
+            }
+            else
+            {
+                throw new ArgumentException("Code must start with 'BEGIN CODE' and end with 'END CODE'.");
+            }
+
+            // Visit each statement in the code
             foreach (var statementContext in context.statement())
             {
                 VisitStatement(statementContext);
             }
-
             return null;
         }
 
         public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
         {
-            if (context.assignment_statement() != null) 
+            if (context.assignment_statement() != null)
             {
                 return VisitAssignment_statement(context.assignment_statement());
             }
-            if (context.display_statement() != null) 
+            if (context.display_statement() != null)
             {
                 return VisitDisplay_statement(context.display_statement());
             }
@@ -57,7 +67,7 @@ namespace Interpreter
 
             return null;
         }
-            
+
         public override object VisitDisplay_statement(CodeGrammarParser.Display_statementContext context)
         {
             //List<CodeGrammarParser.ExpressionContext> expressions = context.expression().ToList();
@@ -76,7 +86,7 @@ namespace Interpreter
                 }
             }
 
-            Console.WriteLine(); 
+            Console.WriteLine();
 
             return null;
         }
@@ -228,4 +238,4 @@ namespace Interpreter
 
     }
 }
-    
+

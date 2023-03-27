@@ -1,5 +1,5 @@
 ﻿using Antlr4.Runtime;
-using Interpreter;
+using Interpreter.Visitors;
 using Interpreter.Grammar;
 
 var file = "test.ss";
@@ -17,7 +17,6 @@ var codeContext = codeParser.code();
 // Parse the code and walk the parse tree using the CodeVisitor
 var visitor = new CodeVisitor();
 visitor.VisitCode(codeContext);
-
 
 
 /*

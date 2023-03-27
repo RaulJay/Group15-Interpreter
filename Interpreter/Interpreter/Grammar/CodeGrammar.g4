@@ -37,17 +37,13 @@ TRUE: 'TRUE';
 WHITESPACE: [\t\r\n]+ -> skip;
 
 // Define the grammar rules
-code: statement* EOF;
+code: BEGIN NEWLINE statement* NEWLINE END;
 
-statement: BEGIN 
-           NEWLINE
+statement:
           (//variable_declaration
            assignment_statement
           | display_statement
           | if_block)
-          NEWLINE       
-          END   
-
           ;
 
 //variable_declaration: data_type identifier (ASSIGN expression)?;
