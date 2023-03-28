@@ -1,50 +1,68 @@
 ﻿grammar CodeGrammar;
 
 // Define the tokens
-AND: '&';
-ASSIGN: '=';
+
+// Begin Statements
 BEGIN: 'BEGIN CODE';
 BEGINIF: 'BEGIN IF';
-BOOL: 'BOOL';
-CHAR: 'CHAR';
-COMMA: ',';
-DISPLAY: 'DISPLAY:';
-DIV: '/';
-ELSE: 'ELSE';
+
+// End Statements
 END: 'END CODE';
 ENDIF: 'END IF';
-EQ: '==';
-FALSE: 'FALSE';
-GT: '>';
-GTE: '>=';
-IF: 'IF';
-INT: 'INT';
-LBRACK: '[';
-LT: '<';
-LTE: '<=';
-LPAREN: '(';
-MINUS: '-';
+
+// Input Output Statements
+DISPLAY: 'DISPLAY:';
+
+// Operators
+AND: '&';
+ASSIGN: '=';
+DIV: '/';
+PLUS: '+';
 MOD: '%';
 MULT: '*';
-NEWLINE: '\r'? '\n'| '\r';
+MINUS: '-';
 NEQ: '!=';
 NOT: '!';
 OR: '|';
-PLUS: '+';
+GT: '>';
+GTE: '>=';
+LT: '<';
+LTE: '<=';
+EQ: '==';
+POWER: '**';
+
+// Special Characters
+COMMA: ',';
 RBRACK: ']';
 RPAREN: ')';
-TRUE: 'TRUE';
-WHITESPACE: [\t\r\n]+ -> skip;
+LBRACK: '[';
+LPAREN: '(';
 
-// Define the grammar rules
+// Data Types
+BOOL: 'BOOL';
+CHAR: 'CHAR';
+INT: 'INT';
+
+// Conditional Statements
+ELSE: 'ELSE';
+IF: 'IF';
+FALSE: 'FALSE';
+TRUE: 'TRUE';
+
+// Token Skips
+WHITESPACE: [\t\r\n]+ -> skip;
+COMMENT: '#' ~[\r\n]* -> skip;
+NEWLINE: '\r'? '\n'| '\r';
+
+// Define the grammar rules parent / root
 code: BEGIN NEWLINE statement* NEWLINE END;
 
-statement:
-          (//variable_declaration
-           assignment_statement
-          | display_statement
-          | if_block)
-          ;
+statement
+        : assignment_statement
+        | display_statement
+        | if_block
+        | COMMENT
+        ;
 
 //variable_declaration: data_type identifier (ASSIGN expression)?;
 
@@ -54,14 +72,22 @@ data_type: INT | CHAR | BOOL;
 assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE;
 
 
-expression: literal
-           | IDENTIFIER
-           | expression (PLUS | MINUS | MULT | DIV | MOD) expression
-           | LPAREN expression RPAREN
-           //| expression (EQ | NEQ | GT | LT | GTE | LTE) expression
-           //| expression (AND | OR) expression
-           | NOT expression
-           ;
+expression
+    : literal                                   # literalExpression
+    | IDENTIFIER                                # identifierExpression
+    | LPAREN expression RPAREN                  # parenthesizeExpression
+    | expression exponentOp expression          # exponentExpression    
+    | expression multOp expression              # multiplicationExpression
+    | expression addOp expression               # additionExpression
+    | expression compareOp expression           # comparisonExpression
+    | expression boolOp expression              # booleanExpression
+    ;
+
+multOp: MULT | DIV | MOD ;
+addOp: PLUS | MINUS;
+compareOp: LT | GT | LTE | GTE | EQ | NEQ;
+boolOp: AND | OR ;
+exponentOp: POWER;
 
 literal: INTEGER
         | FLOAT
