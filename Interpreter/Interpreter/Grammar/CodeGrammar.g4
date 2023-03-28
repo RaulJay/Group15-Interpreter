@@ -54,27 +54,26 @@ WHITESPACE: [\t\r\n]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
-// Define the grammar rules
+// Define the grammar rules parent / root
 code: BEGIN NEWLINE statement* NEWLINE END;
 
-statement:
-          (//variable_declaration
-           assignment_statement
-          | display_statement
-          | if_block)
-          | COMMENT
-          ;
+statement
+        : assignment_statement
+        | display_statement
+        | if_block
+        | COMMENT
+        ;
 
 //variable_declaration: data_type identifier (ASSIGN expression)?;
 
 data_type: INT | CHAR | BOOL;
 
 
-assignment_statement: data_type IDENTIFIER ASSIGN expression* NEWLINE;
+assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE;
 
 
 expression
-    : literal                                   # constantExpression
+    : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    

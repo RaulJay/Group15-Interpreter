@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Antlr4 Remove="Grammar\.antlr\**" />
+    <Compile Remove="Grammar\.antlr\**" />
+    <EmbeddedResource Remove="Grammar\.antlr\**" />
+    <None Remove="Grammar\.antlr\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4" Version="4.6.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,6 +24,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\net6.0\test.ss" />
   </ItemGroup>
 
 </Project>
