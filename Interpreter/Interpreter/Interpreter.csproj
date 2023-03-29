@@ -30,4 +30,8 @@
     <None Include="bin\Debug\net6.0\test.ss" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ErrorHandling\" />
+  </ItemGroup>
+
 </Project>
