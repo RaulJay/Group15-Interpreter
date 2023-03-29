@@ -11,7 +11,7 @@ END: 'END CODE';
 ENDIF: 'END IF';
 
 // Input Output Statements
-DISPLAY: 'DISPLAY:';
+DISPLAY: 'DISPLAY';
 
 // Operators
 AND: '&';
@@ -37,6 +37,7 @@ RBRACK: ']';
 RPAREN: ')';
 LBRACK: '[';
 LPAREN: '(';
+COLON: ':';
 
 // Data Types
 BOOL: 'BOOL';
@@ -51,12 +52,12 @@ FALSE: 'FALSE';
 TRUE: 'TRUE';
 
 // Token Skips
-WHITESPACE: [\t\r\n]+ -> skip;
+WHITESPACE: [\t\r]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: BEGIN NEWLINE statement* NEWLINE END;
+code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END NEWLINE?;
 
 statement
         : assignment_statement
@@ -69,8 +70,8 @@ statement
 
 data_type: INT | CHAR | BOOL | FLOAT;
 
-
-assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE;
+declaration: NEWLINE? assignment_statement NEWLINE?;
+assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE?;
 
 
 expression
@@ -101,7 +102,7 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRING: ('"' ~'"'* '"' | '\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: DISPLAY':' expression NEWLINE;
+display_statement: NEWLINE? DISPLAY COLON expression* NEWLINE?;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 

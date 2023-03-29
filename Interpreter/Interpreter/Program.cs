@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Interpreter.Visitors;
 using Interpreter.Grammar;
+using Interpreter.ErrorHandling;
 
 var file = "test.ss";
 
@@ -12,8 +13,12 @@ var inputStream = new AntlrInputStream(fileContents);
 var codeLexer = new CodeGrammarLexer(inputStream);
 CommonTokenStream commonTokenStream = new CommonTokenStream(codeLexer);
 var codeParser = new CodeGrammarParser(commonTokenStream);
-var codeContext = codeParser.code();
 
+// Error Listener
+var errorListener = new ErrorListener();
+codeParser.AddErrorListener(errorListener);
+
+var codeContext = codeParser.code();
 // Parse the code and walk the parse tree using the CodeVisitor
 var visitor = new CodeVisitor();
 visitor.VisitCode(codeContext);
