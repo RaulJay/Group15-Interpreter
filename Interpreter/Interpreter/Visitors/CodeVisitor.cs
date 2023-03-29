@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime.Misc;
+using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
 using System.Text.RegularExpressions;
 
@@ -6,7 +7,8 @@ namespace Interpreter.Visitors
 {
     internal class CodeVisitor : CodeGrammarBaseVisitor<object>
     {
-        private Dictionary<string, object?> Variables { get; } = new Dictionary<string, object?>();
+        private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
+        private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
 
         public override object VisitCode([NotNull] CodeGrammarParser.CodeContext context)
         {
@@ -56,16 +58,29 @@ namespace Interpreter.Visitors
             if (type == "STRING" || type == "CHAR" || type == "BOOL")
                 value = value.Substring(1, value.Length - 2);
 
-            Variables[varName] = value;
+            Variable var = new Variable()
+            {
+                Name = varName,
+                Value = value,
+                DataType = type
+            };
+
+            Variables[varName] = var;
+            //Variables[varName] = value;
+
+            //Console.WriteLine(Variables[varName].Value);
 
             return new object();
         }
 
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
+            var varName = context.expression().ToString();
+            var value = new object();
             foreach (var variable in Variables)
             {
-                Console.WriteLine("{0}", variable.Value);
+                value = Variables[varName].Value;
+                Console.WriteLine(value);
                 break;
             }
 
@@ -86,6 +101,41 @@ namespace Interpreter.Visitors
             {
                 return new object();
             }
+        }
+
+        public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            var operation = context.multOp().GetText();
+
+            #pragma warning disable CS8603 // Possible null reference return.
+            return operation switch
+            {
+                "*" => arithmeticOperation.Multiply(left, right),
+                "/" => arithmeticOperation.Divide(left, right),
+                "%" => arithmeticOperation.Modulo(left, right),
+                _ => throw new NotImplementedException()
+            };
+            #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            var operation = context.addOp().GetText();
+
+            #pragma warning disable CS8603 // Possible null reference return.
+            return operation switch
+            {
+                "+" => arithmeticOperation.Add(left, right),
+                "-" => arithmeticOperation.Subtract(left, right),
+                _ => throw new NotImplementedException(),
+            };
+            #pragma warning restore CS8603 // Possible null reference return.
         }
 
         public override object VisitExpression([NotNull] CodeGrammarParser.ExpressionContext context)

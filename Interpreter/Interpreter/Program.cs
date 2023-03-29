@@ -23,6 +23,7 @@ var codeContext = codeParser.code();
 var visitor = new CodeVisitor();
 visitor.VisitCode(codeContext);
 
+Console.ReadLine();
 
 /*
 // Create a lexer and parser for the code
