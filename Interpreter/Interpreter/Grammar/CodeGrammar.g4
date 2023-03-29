@@ -42,6 +42,7 @@ LPAREN: '(';
 BOOL: 'BOOL';
 CHAR: 'CHAR';
 INT: 'INT';
+FLOAT: 'FLOAT';
 
 // Conditional Statements
 ELSE: 'ELSE';
@@ -66,7 +67,7 @@ statement
 
 //variable_declaration: data_type identifier (ASSIGN expression)?;
 
-data_type: INT | CHAR | BOOL;
+data_type: INT | CHAR | BOOL | FLOAT;
 
 
 assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE;
@@ -90,13 +91,13 @@ boolOp: AND | OR ;
 exponentOp: POWER;
 
 literal: INTEGER
-        | FLOAT
+        | FLOATING
         | STRING
         | BOOLEAN
         ;
 
 INTEGER: [0-9]+;
-FLOAT: [0-9]+ '.' [0-9]+;
+FLOATING: [0-9]+ '.' [0-9]+;
 STRING: ('"' ~'"'* '"' | '\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 

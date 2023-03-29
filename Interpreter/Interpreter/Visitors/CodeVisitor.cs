@@ -52,15 +52,20 @@ namespace Interpreter.Visitors
             var varName = context.IDENTIFIER().GetText();
             var value = context.expression().GetText();
 
-            Console.WriteLine($"Assignment statement: {varName} = {value}");
+            if (type == "INT" && value.Contains("."))
+                return null;
+            if (type == "STRING" || type == "CHAR" || type == "BOOL")
+                value = value.Substring(1, value.Length - 2);
+
+            Console.WriteLine($"{type}: {varName} = {value}");
 
             Variables[varName] = value;
 
             // Ibalihin ko sa Display_Statement later ah
-            foreach (var var in Variables)
+            /*foreach (var var in Variables)
             {
                 Console.WriteLine("{0}", var.Value);
-            }
+            }*/
 
             return null;
         }
@@ -91,7 +96,7 @@ namespace Interpreter.Visitors
             {
                 return int.Parse(i.GetText());
             } 
-            else if (context.literal().FLOAT() is { } f) 
+            else if (context.literal().FLOATING() is { } f) 
             {
                 return float.Parse(f.GetText());
             }
@@ -225,9 +230,9 @@ namespace Interpreter.Visitors
             {
                 return int.Parse(context.INTEGER().GetText());
             }
-            else if (context.FLOAT() != null)
+            else if (context.FLOATING() != null)
             {
-                return float.Parse(context.FLOAT().GetText());
+                return float.Parse(context.FLOATING().GetText());
             }
             else if (context.STRING() != null)
             {
