@@ -2,7 +2,7 @@
 using Interpreter.Visitors;
 using Interpreter.Grammar;
 
-var file = "test.ss";
+var file = "Grammar\\test.ss";
 
 var fileContents = File.ReadAllText(file);
 

@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
 using Interpreter.Grammar;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 
 namespace Interpreter.Visitors
@@ -13,7 +14,7 @@ namespace Interpreter.Visitors
             string code = context.GetText().Trim();
             if (code.StartsWith("BEGIN CODE") && code.EndsWith("END CODE"))
             {
-                Console.WriteLine("Success");
+                //Console.WriteLine("Success");
 
                 // Visit each statement in the code
                 foreach (var statementContext in context.statement())
@@ -57,7 +58,7 @@ namespace Interpreter.Visitors
             if (type == "STRING" || type == "CHAR" || type == "BOOL")
                 value = value.Substring(1, value.Length - 2);
 
-            Console.WriteLine($"{type}: {varName} = {value}");
+            //Console.WriteLine($"{varName} = {value}");
 
             Variables[varName] = value;
 
@@ -79,16 +80,21 @@ namespace Interpreter.Visitors
             {
                 Console.Write(Visit(expressionContext));
             }*/
-            foreach (var variable in Variables)
-            {
-                Console.WriteLine("{0} = {1}", variable.Key, variable.Value);
-                break;
-            }
+            var exp = context.expression().GetText();
+            Variables["a"] = 1;
+            Variables["b"] = 2;
 
-            Console.WriteLine();
+            if (Variables.TryGetValue(exp, out var value))
+            {
+                Console.Write($"{value}");
+            } else
+            {
+                Console.Write("No Variable exist");
+            }
 
             return null;
         }
+
 
         public override object? VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {
