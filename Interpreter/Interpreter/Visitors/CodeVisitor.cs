@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
 using Interpreter.Grammar;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 
 namespace Interpreter.Visitors
@@ -10,19 +11,12 @@ namespace Interpreter.Visitors
 
         public override object VisitCode([NotNull] CodeGrammarParser.CodeContext context)
         {
-            string code = context.GetText().Trim();
-            if (code.StartsWith("BEGIN CODE") && code.EndsWith("END CODE"))
+            var code = context.GetText();
+            // Visit each statement in the code
+            foreach (var statementContext in context.statement())
             {
-
-                // Visit each statement in the code
-                foreach (var statementContext in context.statement())
-                {
-                    VisitStatement(statementContext);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Code must start with 'BEGIN CODE' and end with 'END CODE'.");
+                Console.WriteLine(statementContext.GetText());
+                VisitStatement(statementContext);
             }
             return new object();
         }
@@ -56,6 +50,8 @@ namespace Interpreter.Visitors
             if (type == "STRING" || type == "CHAR" || type == "BOOL")
                 value = value.Substring(1, value.Length - 2);
 
+            //Console.WriteLine($"{varName} = {value}");
+
             Variables[varName] = value;
 
             return new object();
@@ -63,14 +59,26 @@ namespace Interpreter.Visitors
 
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
-            foreach (var variable in Variables)
+            //List<CodeGrammarParser.ExpressionContext> expressions = context.expression().ToList();
+
+            // Visit each expression in the display statement
+            /*foreach (var expressionContext in context.expression())
             {
-                Console.WriteLine("{0}", variable.Value);
-                break;
+                Console.Write(Visit(expressionContext));
+            }*/
+            var exp = context.expression().GetText();
+
+            if (Variables.TryGetValue(exp, out var value))
+            {
+                Console.Write($"{value}");
+            } else
+            {
+                Console.Write("No Variable exist");
             }
 
-            return new object();
+            return null;
         }
+
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {

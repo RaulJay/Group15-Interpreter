@@ -52,12 +52,12 @@ FALSE: 'FALSE';
 TRUE: 'TRUE';
 
 // Token Skips
-WHITESPACE: [\t\r]+ -> skip;
+WHITESPACE: [\t\r\n]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END NEWLINE?;
+code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
 
 statement
         : assignment_statement
@@ -102,7 +102,8 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRING: ('"' ~'"'* '"' | '\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: NEWLINE? DISPLAY COLON expression* NEWLINE?;
+display_statement: DISPLAY':' expression NEWLINE?;
+
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
