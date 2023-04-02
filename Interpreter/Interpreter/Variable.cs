@@ -3,8 +3,8 @@ namespace Interpreter
 {
     public class Variable
     {
-        public string Name { get; set; }
-        public string DataType { get; set; }
+        public String Name { get; set; }
+        public String DataType { get; set; }
         public object? Value { get; set; }
         // public int Line { get; set; }
 

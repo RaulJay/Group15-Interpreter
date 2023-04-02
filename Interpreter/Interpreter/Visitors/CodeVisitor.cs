@@ -4,6 +4,7 @@ using Interpreter.Grammar;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Interpreter.Visitors
 {
@@ -46,29 +47,37 @@ namespace Interpreter.Visitors
             // Extract the identifier and visit the expression
             var type = Visit(context.data_type()) as Type;
             var typeName = TypeName(type.Name);
-            var varName = context.declaration().GetText();
-            var declared = varName.Split(',');
+            var declared = context.declaration().GetText();
+            var declaration = declared.Split(',');
             object value;
 
-            //if (context.expression().GetText() != null)
-            //{
-            //    value = context.expression().GetText();
-            //} else
-            //{
-            //    value = null;
-            //}
-
-            Variable var = new Variable()
+            foreach (var dec in declaration)
             {
-                Name = varName,
-                Value = null,
-                //DataType = type
-            };
+                if (dec.Contains('='))
+                {
+                    var equalIndex = dec.IndexOf('=');
+                    String varName;
+                    varName = dec.Substring(0, equalIndex);
 
-            Variables[varName] = var;
-            //Variables[varName] = value;
+                    if (equalIndex + 1 == dec.Length - 1)
+                    {
+                        value = dec.Substring(equalIndex + 1);
+                    } 
+                    else
+                    {
+                        value = dec.Substring(equalIndex + 1, dec.Length - 1);
+                    }
 
-            //Console.WriteLine(Variables[varName].Value);
+                    Variable val = new Variable()
+                    {
+                        Name = varName,
+                        Value = value,
+                        DataType = typeName
+                    };
+
+                    Variables[varName] = val;
+                }
+            }
 
             return new object();
         }
@@ -124,7 +133,7 @@ namespace Interpreter.Visitors
         {
             var varName = context.expression().GetText();
 
-            var value = (Variables[varName].Value == null ? null : Variables[varName].Value);
+            var value = Variables[varName].Value;
             Console.WriteLine(value);
             return null;
         }
