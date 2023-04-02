@@ -76,6 +76,7 @@ declaration_statement: data_type declaration NEWLINE;
 
 expression
     : literal                                   # literalExpression
+    | IDENTIFIER                                # identifierExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression
