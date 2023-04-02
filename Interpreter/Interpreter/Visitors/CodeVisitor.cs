@@ -16,6 +16,7 @@ namespace Interpreter.Visitors
 
         public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
         {
+            Console.WriteLine(context.GetText());
             if (context.declaration_statement() != null)
             {
                 return VisitDeclaration_statement(context.declaration_statement());
@@ -32,42 +33,64 @@ namespace Interpreter.Visitors
 
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
+            String varName;
+            object value;
             // Extract the identifier and visit the expression
             var type = Visit(context.data_type()) as Type;
             var typeName = TypeName(type.Name);
             var declared = context.declaration().GetText();
             var declaration = declared.Split(',');
-            object value;
 
             foreach (var dec in declaration)
             {
                 if (dec.Contains('='))
                 {
-                    var equalIndex = dec.IndexOf('=');
-                    String varName;
-                    varName = dec.Substring(0, equalIndex);
-
-                    if (equalIndex + 1 == dec.Length - 1)
+                    // Declaration INT x = y = z = 3
+                    if (dec.Count(c => c == '=') > 1)
                     {
-                        value = dec.Substring(equalIndex + 1);
+                        var decArray = dec.Split("=");
+                        for (int i = 0 ; i <  decArray.Length - 1 ; i++)
+                        {
+                            varName = decArray[i];
+                            value = decArray[decArray.Length - 1];
+                            Variable val = new Variable()
+                            {
+                                Name = varName,
+                                Value = value,
+                                DataType = typeName
+                            };
+                            Variables[varName] = val;
+                        }
                     }
+                    // Declaration x = 3
                     else
                     {
-                        value = dec.Substring(equalIndex + 1, dec.Length - 1);
+                        var equalIndex = dec.IndexOf('=');
+                        varName = dec.Substring(0, equalIndex);
+
+                        if (equalIndex + 1 == dec.Length - 1)
+                        {
+                            value = dec.Substring(equalIndex + 1);
+                        }
+                        else
+                        {
+                            value = dec.Substring(equalIndex + 1, dec.Length - 1);
+                        }
+
+                        Variable val = new Variable()
+                        {
+                            Name = varName,
+                            Value = value,
+                            DataType = typeName
+                        };
+
+                        Variables[varName] = val;
                     }
-
-                    Variable val = new Variable()
-                    {
-                        Name = varName,
-                        Value = value,
-                        DataType = typeName
-                    };
-
-                    Variables[varName] = val;
                 }
+                // Declaration INT x
                 else
                 {
-                    String varName = dec;
+                    varName = dec;
                     Variable val = new Variable()
                     {
                         Name = varName,
