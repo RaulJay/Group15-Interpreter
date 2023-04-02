@@ -13,18 +13,6 @@ namespace Interpreter.Visitors
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
 
-        public override object VisitCode([NotNull] CodeGrammarParser.CodeContext context)
-        {
-            var code = context.GetText();
-            // Visit each statement in the code
-            foreach (var statementContext in context.statement())
-            {
-                Console.WriteLine(statementContext.GetText());
-                VisitStatement(statementContext);
-            }
-            return new object();
-        }
-
 
         public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
         {
@@ -62,7 +50,7 @@ namespace Interpreter.Visitors
                     if (equalIndex + 1 == dec.Length - 1)
                     {
                         value = dec.Substring(equalIndex + 1);
-                    } 
+                    }
                     else
                     {
                         value = dec.Substring(equalIndex + 1, dec.Length - 1);
@@ -75,6 +63,17 @@ namespace Interpreter.Visitors
                         DataType = typeName
                     };
 
+                    Variables[varName] = val;
+                }
+                else
+                {
+                    String varName = dec;
+                    Variable val = new Variable()
+                    {
+                        Name = varName,
+                        Value = null,
+                        DataType = typeName
+                    };
                     Variables[varName] = val;
                 }
             }
