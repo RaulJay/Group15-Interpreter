@@ -1,28 +1,25 @@
 ﻿using Antlr4.Runtime.Misc;
+using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 
 namespace Interpreter.Visitors
 {
     internal class CodeVisitor : CodeGrammarBaseVisitor<object>
     {
-        private Dictionary<string, object?> Variables { get; } = new Dictionary<string, object?>();
+        private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
+        private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
 
         public override object VisitCode([NotNull] CodeGrammarParser.CodeContext context)
         {
-            string code = context.GetText().Trim();
-            if (code.StartsWith("BEGIN CODE") && code.EndsWith("END CODE"))
+            var code = context.GetText();
+            // Visit each statement in the code
+            foreach (var statementContext in context.statement())
             {
-
-                // Visit each statement in the code
-                foreach (var statementContext in context.statement())
-                {
-                    VisitStatement(statementContext);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Code must start with 'BEGIN CODE' and end with 'END CODE'.");
+                Console.WriteLine(statementContext.GetText());
+                VisitStatement(statementContext);
             }
             return new object();
         }
@@ -30,9 +27,9 @@ namespace Interpreter.Visitors
 
         public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
         {
-            if (context.assignment_statement() != null)
+            if (context.declaration_statement() != null)
             {
-                return VisitAssignment_statement(context.assignment_statement());
+                return VisitDeclaration_statement(context.declaration_statement());
             }
             else if (context.display_statement() != null)
             {
@@ -44,41 +41,102 @@ namespace Interpreter.Visitors
             }
         }
 
-        public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
+        public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
             // Extract the identifier and visit the expression
-            var type = context.data_type().GetText();
-            var varName = context.IDENTIFIER().GetText();
-            var value = context.expression().GetText();
+            var type = Visit(context.data_type()) as Type;
+            var typeName = TypeName(type.Name);
+            var varName = context.declaration().GetText();
+            var declared = varName.Split(',');
+            object value;
 
-            if (type == "INT" && value.Contains("."))
-                return new object();
-            if (type == "STRING" || type == "CHAR" || type == "BOOL")
-                value = value.Substring(1, value.Length - 2);
+            //if (context.expression().GetText() != null)
+            //{
+            //    value = context.expression().GetText();
+            //} else
+            //{
+            //    value = null;
+            //}
 
-            Variables[varName] = value;
+            Variable var = new Variable()
+            {
+                Name = varName,
+                Value = null,
+                //DataType = type
+            };
+
+            Variables[varName] = var;
+            //Variables[varName] = value;
+
+            //Console.WriteLine(Variables[varName].Value);
 
             return new object();
+        }
+
+        public static String TypeName(String typeName)
+        {
+            String typeDisplayName;
+            switch (typeName)
+            {
+                case "Int32":
+                    typeDisplayName = "int";
+                    break;
+                case "Single":
+                    typeDisplayName = "float";
+                    break;
+                case "Boolean":
+                    typeDisplayName = "bool";
+                    break;
+                case "Char":
+                    typeDisplayName = "char";
+                    break;
+                case "String":
+                    typeDisplayName = "string";
+                    break;
+                default:
+                    typeDisplayName = typeName;
+                    break;
+            }
+
+            return typeDisplayName;
+        }
+
+        public override object VisitData_type([NotNull] CodeGrammarParser.Data_typeContext context)
+        {
+            switch (context.GetText())
+            {
+                case "INT":
+                    return typeof(int);
+                case "FLOAT":
+                    return typeof(float);
+                case "BOOL":
+                    return typeof(bool);
+                case "CHAR":
+                    return typeof(char);
+                case "STRING":
+                    return typeof(string);
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
-            foreach (var variable in Variables)
-            {
-                Console.WriteLine("{0}", variable.Value);
-                break;
-            }
+            var varName = context.expression().GetText();
 
-            return new object();
+            var value = (Variables[varName].Value == null ? null : Variables[varName].Value);
+            Console.WriteLine(value);
+            return null;
         }
+
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {
             if (context.literal().INTEGER() is { } i)
             {
                 return int.Parse(i.GetText());
-            } 
-            else if (context.literal().FLOATING() is { } f) 
+            }
+            else if (context.literal().FLOATING() is { } f)
             {
                 return float.Parse(f.GetText());
             }
@@ -86,6 +144,41 @@ namespace Interpreter.Visitors
             {
                 return new object();
             }
+        }
+
+        public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            var operation = context.multOp().GetText();
+
+#pragma warning disable CS8603 // Possible null reference return.
+            return operation switch
+            {
+                "*" => arithmeticOperation.Multiply(left, right),
+                "/" => arithmeticOperation.Divide(left, right),
+                "%" => arithmeticOperation.Modulo(left, right),
+                _ => throw new NotImplementedException()
+            };
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            var operation = context.addOp().GetText();
+
+#pragma warning disable CS8603 // Possible null reference return.
+            return operation switch
+            {
+                "+" => arithmeticOperation.Add(left, right),
+                "-" => arithmeticOperation.Subtract(left, right),
+                _ => throw new NotImplementedException(),
+            };
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public override object VisitExpression([NotNull] CodeGrammarParser.ExpressionContext context)
@@ -126,4 +219,3 @@ namespace Interpreter.Visitors
 
     }
 }
-

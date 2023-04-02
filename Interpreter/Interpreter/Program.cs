@@ -3,7 +3,7 @@ using Interpreter.Visitors;
 using Interpreter.Grammar;
 using Interpreter.ErrorHandling;
 
-var file = "test.ss";
+var file = "..\\..\\..\\Grammar\\test.code";
 
 var fileContents = File.ReadAllText(file);
 
@@ -15,14 +15,15 @@ CommonTokenStream commonTokenStream = new CommonTokenStream(codeLexer);
 var codeParser = new CodeGrammarParser(commonTokenStream);
 
 // Error Listener
-var errorListener = new ErrorListener();
-codeParser.AddErrorListener(errorListener);
+//var errorListener = new ErrorListener();
+//codeParser.AddErrorListener(errorListener);
 
 var codeContext = codeParser.code();
 // Parse the code and walk the parse tree using the CodeVisitor
 var visitor = new CodeVisitor();
 visitor.VisitCode(codeContext);
 
+Console.ReadLine();
 
 /*
 // Create a lexer and parser for the code

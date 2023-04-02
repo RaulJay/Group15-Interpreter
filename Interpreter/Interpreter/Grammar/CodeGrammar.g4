@@ -52,15 +52,15 @@ FALSE: 'FALSE';
 TRUE: 'TRUE';
 
 // Token Skips
-WHITESPACE: [\t\r]+ -> skip;
+WHITESPACE: [\t\r\n]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END NEWLINE?;
+code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
 
 statement
-        : assignment_statement
+        : declaration_statement
         | display_statement
         | if_block
         | COMMENT
@@ -70,13 +70,12 @@ statement
 
 data_type: INT | CHAR | BOOL | FLOAT;
 
-declaration: NEWLINE? assignment_statement NEWLINE?;
-assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE?;
+declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
+declaration_statement: data_type declaration NEWLINE;
 
 
 expression
     : literal                                   # literalExpression
-    | IDENTIFIER                                # identifierExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression
@@ -102,7 +101,8 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRING: ('"' ~'"'* '"' | '\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: NEWLINE? DISPLAY COLON expression* NEWLINE?;
+display_statement: DISPLAY':' expression NEWLINE?;
+
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
