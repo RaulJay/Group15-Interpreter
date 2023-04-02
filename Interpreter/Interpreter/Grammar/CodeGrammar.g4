@@ -60,7 +60,7 @@ NEWLINE: '\r'? '\n'| '\r';
 code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
 
 statement
-        : assignment_statement
+        : declaration_statement
         | display_statement
         | if_block
         | COMMENT
@@ -70,13 +70,12 @@ statement
 
 data_type: INT | CHAR | BOOL | FLOAT;
 
-declaration: NEWLINE? assignment_statement NEWLINE?;
-assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE?;
+declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
+declaration_statement: data_type declaration NEWLINE;
 
 
 expression
     : literal                                   # literalExpression
-    | IDENTIFIER                                # identifierExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression

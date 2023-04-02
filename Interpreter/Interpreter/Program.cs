@@ -3,7 +3,7 @@ using Interpreter.Visitors;
 using Interpreter.Grammar;
 using Interpreter.ErrorHandling;
 
-var file = "test.ss";
+var file = "..\\..\\..\\Grammar\\test.code";
 
 var fileContents = File.ReadAllText(file);
 
@@ -23,6 +23,7 @@ var codeContext = codeParser.code();
 var visitor = new CodeVisitor();
 visitor.VisitCode(codeContext);
 
+Console.ReadLine();
 
 /*
 // Create a lexer and parser for the code
