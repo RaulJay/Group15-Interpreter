@@ -81,15 +81,53 @@ namespace Interpreter.Visitors
                 Console.Write(Visit(expressionContext));
             }*/
             var exp = context.expression().GetText();
+            var val = context.GetText();
+            // to be deleted 
             Variables["a"] = 1;
             Variables["b"] = 2;
-
-            if (Variables.TryGetValue(exp, out var value))
+            string[] varArr;
+            if (exp.Contains("&"))
             {
-                Console.Write($"{value}");
+                int ctr = exp.Length;
+                varArr= new string[ctr];
+
+                for (int x = 0; x < ctr; x++)
+                {
+                    if(x + 1 < ctr)
+                    {
+                        if (exp[x + 1] == '&')
+                        {
+                            varArr[x] = exp[x].ToString();
+                        }
+                    }
+                    else
+                    {
+                        varArr[x - 1] = exp[x].ToString();
+                        break;
+                    }
+                    
+                }
+                foreach(var x in varArr)
+                {
+                    if (x == null) 
+                    {
+                       // do nothing
+                    } else
+                    {
+                        Console.Write(Variables[x.ToString()]);
+                    }
+                    
+                }
             } else
             {
-                Console.Write("No Variable exist");
+                if (Variables.TryGetValue(exp, out var value))
+                {
+                    Console.Write($"{value}");
+                }else
+                {
+                    Console.Write("No Variable exist");
+                }
+                
             }
 
             return null;

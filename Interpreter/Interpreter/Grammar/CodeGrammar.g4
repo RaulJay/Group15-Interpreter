@@ -90,6 +90,7 @@ compareOp: LT | GT | LTE | GTE | EQ | NEQ;
 boolOp: AND | OR ;
 exponentOp: POWER;
 
+
 literal: INTEGER
         | FLOATING
         | STRING
@@ -101,8 +102,7 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRING: ('"' ~'"'* '"' | '\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: DISPLAY':' expression NEWLINE?;
-
+display_statement: DISPLAY':' expression AND? NEWLINE?;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
