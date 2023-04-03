@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Interpreter.Visitors
 {
@@ -16,7 +17,6 @@ namespace Interpreter.Visitors
 
         public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
         {
-            Console.WriteLine(context.GetText());
             if (context.declaration_statement() != null)
             {
                 return VisitDeclaration_statement(context.declaration_statement());
@@ -45,47 +45,28 @@ namespace Interpreter.Visitors
             {
                 if (dec.Contains('='))
                 {
-                    // Declaration INT x = y = z = 3
-                    if (dec.Count(c => c == '=') > 1)
+                    var equalIndex = dec.IndexOf('=');
+                    varName = dec.Substring(0, equalIndex);
+
+                    if (equalIndex + 1 == dec.Length - 1)
                     {
-                        var decArray = dec.Split("=");
-                        for (int i = 0 ; i <  decArray.Length - 1 ; i++)
-                        {
-                            varName = decArray[i];
-                            value = decArray[decArray.Length - 1];
-                            Variable val = new Variable()
-                            {
-                                Name = varName,
-                                Value = value,
-                                DataType = typeName
-                            };
-                            Variables[varName] = val;
-                        }
+                        value = dec.Substring(equalIndex + 1);
                     }
-                    // Declaration x = 3
                     else
                     {
-                        var equalIndex = dec.IndexOf('=');
-                        varName = dec.Substring(0, equalIndex);
-
-                        if (equalIndex + 1 == dec.Length - 1)
-                        {
-                            value = dec.Substring(equalIndex + 1);
-                        }
-                        else
-                        {
-                            value = dec.Substring(equalIndex + 1, dec.Length - 1);
-                        }
-
-                        Variable val = new Variable()
-                        {
-                            Name = varName,
-                            Value = value,
-                            DataType = typeName
-                        };
-
-                        Variables[varName] = val;
+                        value = dec.Substring(equalIndex + 1);
                     }
+
+                    value = ConvertToType(value, type);
+
+                    Variable val = new Variable()
+                    {
+                        Name = varName,
+                        Value = value,
+                        DataType = typeName
+                    };
+
+                    Variables[varName] = val;
                 }
                 // Declaration INT x
                 else
@@ -151,12 +132,55 @@ namespace Interpreter.Visitors
             }
         }
 
+        public static object ConvertToType(object value, Type type)
+        {
+            if (type == typeof(int))
+            {
+                return int.Parse(value.ToString());
+            }
+            else if (type == typeof(float))
+            {
+                return float.Parse(value.ToString());
+            }
+            else if (type == typeof(bool))
+            {
+                string boolean = value.ToString();
+
+                if (boolean == "\"TRUE\"")
+                {
+                    return bool.Parse("True");
+                } else
+                {
+                    return bool.Parse("False");
+                }
+            }
+            else if (type == typeof(char))
+            {
+                string text = value.ToString();
+                char character = text[1];
+                return character;
+            }
+            else if (type == typeof(string))
+            {
+                String text = value.ToString();
+                // Remove the enclosing quotes from the string
+                text = text.Substring(1, text.Length - 2);
+                // Replace escape sequences with their corresponding characters
+                text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
+                return text;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
             var varName = context.expression().GetText();
 
             var value = Variables[varName].Value;
-            Console.WriteLine(value);
+            Console.Write(value);
             return null;
         }
 
@@ -170,6 +194,24 @@ namespace Interpreter.Visitors
             else if (context.literal().FLOATING() is { } f)
             {
                 return float.Parse(f.GetText());
+            }
+            else if (context.literal().STRINGS() is { } s)
+            {
+                String text =  s.GetText();
+                // Remove the enclosing quotes from the string
+                text = text.Substring(1, text.Length - 2);
+                // Replace escape sequences with their corresponding characters
+                text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
+                return text;
+            }
+            else if (context.literal().CHARA() is { } c)
+            {
+                string text = c.GetText();
+                return text;
+            }
+            else if (context.literal().BOOLEAN() is { } t)
+            {
+                return bool.Parse(t.GetText());
             }
             else
             {
@@ -210,40 +252,6 @@ namespace Interpreter.Visitors
                 _ => throw new NotImplementedException(),
             };
 #pragma warning restore CS8603 // Possible null reference return.
-        }
-
-        public override object VisitExpression([NotNull] CodeGrammarParser.ExpressionContext context)
-        {
-            return new object();
-        }
-
-        public override object VisitLiteral([NotNull] CodeGrammarParser.LiteralContext context)
-        {
-            if (context.BOOLEAN() != null)
-            {
-                return bool.Parse(context.BOOLEAN().GetText());
-            }
-            else if (context.INTEGER() != null)
-            {
-                return int.Parse(context.INTEGER().GetText());
-            }
-            else if (context.FLOATING() != null)
-            {
-                return float.Parse(context.FLOATING().GetText());
-            }
-            else if (context.STRING() != null)
-            {
-                string text = context.STRING().GetText();
-                // Remove the enclosing quotes from the string
-                text = text.Substring(1, text.Length - 2);
-                // Replace escape sequences with their corresponding characters
-                text = Regex.Replace(text, @"\\(.)", "$1");
-                return text;
-            }
-            else
-            {
-                throw new InvalidOperationException("Unknown literal type");
-            }
         }
 
 
