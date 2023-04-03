@@ -1,15 +1,8 @@
 ﻿BEGIN CODE
-    INT z = 3
+    STRING z = "Hello World"
+    CHAR c = 'a'
+    FLOAT fl = 1.23
     DISPLAY: z
-
-    INT x = q = 4
-    DISPLAY: x
-    DISPLAY: q
-
-    INT a, b = 3
-    DISPLAY: a
-    DISPLAY: b
-
-    INT y
-    DISPLAY: y
+    DISPLAY: c
+    DISPLAY: fl
 END CODE

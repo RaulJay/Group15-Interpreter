@@ -30,6 +30,8 @@ LT: '<';
 LTE: '<=';
 EQ: '==';
 POWER: '**';
+DOUBLEQ: '\"';
+SINGLEQ: '\'';
 
 // Special Characters
 COMMA: ',';
@@ -44,6 +46,7 @@ BOOL: 'BOOL';
 CHAR: 'CHAR';
 INT: 'INT';
 FLOAT: 'FLOAT';
+STRING: 'STRING';
 
 // Conditional Statements
 ELSE: 'ELSE';
@@ -61,6 +64,7 @@ code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
 
 statement
         : declaration_statement
+        | assignment_statement
         | display_statement
         | if_block
         | COMMENT
@@ -68,10 +72,12 @@ statement
 
 //variable_declaration: data_type identifier (ASSIGN expression)?;
 
-data_type: INT | CHAR | BOOL | FLOAT;
+data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
-declaration_statement: data_type declaration NEWLINE;
+declaration_statement: data_type declaration NEWLINE?;
+
+assignment_statement: IDENTIFIER ASSIGN expression*;
 
 
 expression
@@ -93,13 +99,15 @@ exponentOp: POWER;
 
 literal: INTEGER
         | FLOATING
-        | STRING
+        | STRINGS
         | BOOLEAN
+        | CHARA
         ;
 
 INTEGER: [0-9]+;
 FLOATING: [0-9]+ '.' [0-9]+;
-STRING: ('"' ~'"'* '"' | '\'' ~'\''* '\'');
+STRINGS: ('"' ~'"'* '"');
+CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
 display_statement: DISPLAY':' expression NEWLINE?;
