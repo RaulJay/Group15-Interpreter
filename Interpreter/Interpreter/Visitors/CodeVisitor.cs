@@ -21,6 +21,10 @@ namespace Interpreter.Visitors
             {
                 return VisitDeclaration_statement(context.declaration_statement());
             }
+            else if (context.assignment_statement() != null)
+            {
+                return VisitAssignment_statement(context.assignment_statement());
+            }
             else if (context.display_statement() != null)
             {
                 return VisitDisplay_statement(context.display_statement());
@@ -28,6 +32,19 @@ namespace Interpreter.Visitors
             else
             {
                 return new object();
+            }
+        }
+
+        public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
+        {
+            var identifier = context.IDENTIFIER().GetText();
+            if (Variables.ContainsKey(identifier))
+            {
+                return Variables[identifier].Value;
+            }
+            else
+            {
+                throw new Exception($"Variable {identifier} is not declared");
             }
         }
 
@@ -79,6 +96,56 @@ namespace Interpreter.Visitors
                         DataType = typeName
                     };
                     Variables[varName] = val;
+                }
+            }
+
+            return new object();
+        }
+
+        //public override object VisitAssignment_statement(CodeGrammarParser.Assignment_statementContext context)
+        //{
+        //    var exp = Visit(context.expression());
+        //    var identifiers = context.IDENTIFIER().Select(id => id.GetText()).ToList();
+
+        //    // Evaluate the expression
+        //    object value = null;
+        //    if (exp is CodeGrammarParser.LiteralExpressionContext literal)
+        //    {
+        //        value = VisitLiteralExpression(literal);
+        //    }
+        //    else if (exp is CodeGrammarParser.IdentifierExpressionContext identifier)
+        //    {
+        //        value = Variables[identifier.GetText()].Value;
+        //    }
+        //    else if (exp is CodeGrammarParser.AdditionExpressionContext addition)
+        //    {
+        //        // value = EvaluateAdditionExpression(addition);
+        //    }
+        //    // Handle other expression types as needed
+
+        //    // Assign the value to each identifier in the statement
+        //    foreach (var identifier in identifiers)
+        //    {
+        //        Variables[identifier].Value = value;
+        //    }
+
+        //    return null;
+        //}
+
+        public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
+        {
+            var text = context.GetText();
+            String identifiers;
+
+            var exp = Visit(context.expression());
+
+            if (exp is CodeGrammarParser.LiteralExpressionContext)
+            {
+                foreach (var identifierContext in context.IDENTIFIER())
+                {
+                    identifiers = identifierContext.GetText();
+                    Console.WriteLine(identifiers);
+                    Variables[identifiers].Value = exp;
                 }
             }
 
@@ -179,7 +246,9 @@ namespace Interpreter.Visitors
         {
             var varName = context.expression().GetText();
 
-            var value = Variables[varName].Value;
+            var value = Visit(context.expression());
+
+            //var value = Variables[varName].Value;
             Console.Write(value);
             return null;
         }
@@ -253,8 +322,5 @@ namespace Interpreter.Visitors
             };
 #pragma warning restore CS8603 // Possible null reference return.
         }
-
-
-
     }
 }

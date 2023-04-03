@@ -1,10 +1,7 @@
 ﻿BEGIN CODE
-    STRING z = "Hello World"
-    CHAR c = 'a'
-    FLOAT fl = 1.23
-    BOOL t = "TRUE"
+    INT x = 3, y, z
+    y = 4
+    DISPLAY: x
+    DISPLAY: y
     DISPLAY: z
-    DISPLAY: c
-    DISPLAY: fl
-    DISPLAY: t
 END CODE
