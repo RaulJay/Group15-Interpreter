@@ -2,7 +2,9 @@
     STRING z = "Hello World"
     CHAR c = 'a'
     FLOAT fl = 1.23
+    BOOL t = "TRUE"
     DISPLAY: z
     DISPLAY: c
     DISPLAY: fl
+    DISPLAY: t
 END CODE

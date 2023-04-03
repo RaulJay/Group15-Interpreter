@@ -144,7 +144,15 @@ namespace Interpreter.Visitors
             }
             else if (type == typeof(bool))
             {
-                return bool.Parse(value.ToString());
+                string boolean = value.ToString();
+
+                if (boolean == "\"TRUE\"")
+                {
+                    return bool.Parse("True");
+                } else
+                {
+                    return bool.Parse("False");
+                }
             }
             else if (type == typeof(char))
             {
