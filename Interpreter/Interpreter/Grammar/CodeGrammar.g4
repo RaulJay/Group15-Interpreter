@@ -37,6 +37,7 @@ RBRACK: ']';
 RPAREN: ')';
 LBRACK: '[';
 LPAREN: '(';
+COLON: ':';
 
 // Data Types
 BOOL: 'BOOL';
@@ -56,10 +57,10 @@ COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: BEGIN NEWLINE statement* NEWLINE END;
+code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
 
 statement
-        : assignment_statement
+        : declaration_statement
         | display_statement
         | if_block
         | COMMENT
@@ -69,8 +70,8 @@ statement
 
 data_type: INT | CHAR | BOOL | FLOAT;
 
-
-assignment_statement: data_type IDENTIFIER ASSIGN expression NEWLINE;
+declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
+declaration_statement: data_type declaration NEWLINE;
 
 
 expression

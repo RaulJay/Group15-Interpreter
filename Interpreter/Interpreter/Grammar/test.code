@@ -1,0 +1,15 @@
+﻿BEGIN CODE
+    INT z = 3
+    DISPLAY: z
+
+    INT x = q = 4
+    DISPLAY: x
+    DISPLAY: q
+
+    INT a, b = 3
+    DISPLAY: a
+    DISPLAY: b
+
+    INT y
+    DISPLAY: y
+END CODE
