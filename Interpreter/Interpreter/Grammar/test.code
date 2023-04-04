@@ -1,7 +1,12 @@
 ﻿BEGIN CODE
     INT x = 3, y, z
-    y = 4
+    y = z = x
+    CHAR a, b
+    a = 'a'
+    b = 'b'
     DISPLAY: x
     DISPLAY: y
     DISPLAY: z
+    DISPLAY: a
+    DISPLAY: b
 END CODE

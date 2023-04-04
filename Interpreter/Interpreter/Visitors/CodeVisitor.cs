@@ -102,54 +102,16 @@ namespace Interpreter.Visitors
             return new object();
         }
 
-        //public override object VisitAssignment_statement(CodeGrammarParser.Assignment_statementContext context)
-        //{
-        //    var exp = Visit(context.expression());
-        //    var identifiers = context.IDENTIFIER().Select(id => id.GetText()).ToList();
-
-        //    // Evaluate the expression
-        //    object value = null;
-        //    if (exp is CodeGrammarParser.LiteralExpressionContext literal)
-        //    {
-        //        value = VisitLiteralExpression(literal);
-        //    }
-        //    else if (exp is CodeGrammarParser.IdentifierExpressionContext identifier)
-        //    {
-        //        value = Variables[identifier.GetText()].Value;
-        //    }
-        //    else if (exp is CodeGrammarParser.AdditionExpressionContext addition)
-        //    {
-        //        // value = EvaluateAdditionExpression(addition);
-        //    }
-        //    // Handle other expression types as needed
-
-        //    // Assign the value to each identifier in the statement
-        //    foreach (var identifier in identifiers)
-        //    {
-        //        Variables[identifier].Value = value;
-        //    }
-
-        //    return null;
-        //}
-
         public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
         {
-            var text = context.GetText();
-            String identifiers;
-
-            var exp = Visit(context.expression());
-
-            if (exp is CodeGrammarParser.LiteralExpressionContext)
+            var identifier = context.IDENTIFIER();
+            foreach (var i in identifier)
             {
-                foreach (var identifierContext in context.IDENTIFIER())
-                {
-                    identifiers = identifierContext.GetText();
-                    Console.WriteLine(identifiers);
-                    Variables[identifiers].Value = exp;
-                }
+                var expression = context.expression().Accept(this);
+                Variables[i.GetText()].Value = expression;
             }
 
-            return new object();
+            return null;
         }
 
         public static String TypeName(String typeName)
@@ -276,6 +238,8 @@ namespace Interpreter.Visitors
             else if (context.literal().CHARA() is { } c)
             {
                 string text = c.GetText();
+                text = Regex.Replace(text, "^\'|\'$|\\\\(.)", "$1");
+                char charaValue = text[0];
                 return text;
             }
             else if (context.literal().BOOLEAN() is { } t)
