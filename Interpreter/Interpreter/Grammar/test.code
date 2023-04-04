@@ -1,15 +1,7 @@
 ﻿BEGIN CODE
-    INT z = 3
+    STRING f = "Hello World"
+    INT x , y , z = 3
+    DISPLAY: f
     DISPLAY: z
-
-    INT x = q = 4
-    DISPLAY: x
-    DISPLAY: q
-
-    INT a, b = 3
-    DISPLAY: a
-    DISPLAY: b
-
-    INT y
     DISPLAY: y
 END CODE
