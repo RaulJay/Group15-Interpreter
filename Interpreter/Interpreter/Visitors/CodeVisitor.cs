@@ -3,6 +3,7 @@ using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -160,12 +161,75 @@ namespace Interpreter.Visitors
 
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
-            var varName = context.expression().GetText();
+            //var varName = context.expression().GetText();
 
-            var value = Visit(context.expression());
+            //var value = Visit(context.expression());
 
-            //var value = Variables[varName].Value;
-            Console.Write(value);
+            ////var value = Variables[varName].Value;
+            //Console.Write(value);
+
+            var exp = context.expression().GetText();
+            var val = context.GetText();
+            string[] varArr;
+            int ctr = exp.Length;
+            varArr = new string[ctr];
+            /// $ new line
+            /// & concat
+            /// [] escape code for special characters
+
+            // Display value of variable 
+            // if (exp.Contains("&")) it will store the variable name in an array
+            // else it will display the value of the expression
+            /// Display value of variable 
+            /// if (exp.Contains("&")) it will store the variable name in an array
+            /// else it will display the value of the expression
+
+            if (exp.Contains("&"))
+            {
+                for (int x = 0; x < ctr; x++)
+                {
+                    if (x + 1 < ctr)
+                    {
+                        if (exp[x + 1] == '&')
+                        {
+                            varArr[x] = exp[x].ToString();
+                        }
+                    }
+                    else
+                    {
+                        varArr[x] = exp[x].ToString();
+                    }
+
+                }
+                foreach (var x in varArr)
+                {
+                    if (x == null)
+                    {
+                        // do nothing
+                    }
+                    else
+                    {
+                        Console.Write(Variables[x.ToString()].Value);
+                    }
+
+                }
+            }
+            else
+            {
+                if (Variables.TryGetValue(exp, out var value))
+                {
+                    Console.Write(Variables[exp].Value);
+                }
+                else if (exp.Contains('\"'))
+                {
+                    Console.Write(exp.Replace("\"", ""));
+                }
+                else
+                {
+                    Console.Write("No Variable exist");
+                }
+
+            }
             return null;
         }
 
