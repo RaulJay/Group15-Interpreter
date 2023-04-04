@@ -1,12 +1,7 @@
 ﻿BEGIN CODE
-    INT x = 3, y, z
-    y = z = x
-    CHAR a, b
-    a = 'a'
-    b = 'b'
-    DISPLAY: x
-    DISPLAY: y
+    STRING f = "Hello World"
+    INT x , y , z = 3
+    DISPLAY: f
     DISPLAY: z
-    DISPLAY: a
-    DISPLAY: b
+    DISPLAY: y
 END CODE
