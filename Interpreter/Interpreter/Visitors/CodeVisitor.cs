@@ -52,43 +52,40 @@ namespace Interpreter.Visitors
         {
             String varName;
             object value;
-            // Extract the identifier and visit the expression
+            // Extract variable data type
             var type = Visit(context.data_type()) as Type;
             var typeName = TypeName(type.Name);
-            var declared = context.declaration().GetText();
-            var declaration = declared.Split(',');
+            var varNames = context.declaration().IDENTIFIER();
 
-            foreach (var dec in declaration)
+            var declaration = context.declaration().GetText().Split(',');
+            var exp = context.declaration().expression();
+            int flagExp = 0;
+
+            for (int i = 0; i < declaration.Length; i++)
             {
-                if (dec.Contains('='))
+                if (Variables.ContainsKey(varNames[i].GetText()))
                 {
-                    var equalIndex = dec.IndexOf('=');
-                    varName = dec.Substring(0, equalIndex);
-
-                    if (equalIndex + 1 == dec.Length - 1)
-                    {
-                        value = dec.Substring(equalIndex + 1);
-                    }
-                    else
-                    {
-                        value = dec.Substring(equalIndex + 1);
-                    }
-
-                    value = ConvertToType(value, type);
-
-                    Variable val = new Variable()
-                    {
-                        Name = varName,
-                        Value = value,
-                        DataType = typeName
-                    };
-
-                    Variables[varName] = val;
+                    Console.WriteLine(varNames[i].GetText() + "is already declared");
+                    continue;
                 }
-                // Declaration INT x
+                if (declaration[i].Contains('='))
+                {
+                    if (flagExp < exp.Count())
+                    {
+                        varName = varNames[i].GetText();
+                        Variable val = new Variable()
+                        {
+                            Name = varName,
+                            Value = Visit(exp[flagExp]),
+                            DataType = typeName
+                        };
+                        Variables[varName] = val;
+                        flagExp++;
+                    }
+                }
                 else
                 {
-                    varName = dec;
+                    varName = varNames[i].GetText();
                     Variable val = new Variable()
                     {
                         Name = varName,
@@ -158,49 +155,6 @@ namespace Interpreter.Visitors
                     return typeof(string);
                 default:
                     throw new NotImplementedException();
-            }
-        }
-
-        public static object ConvertToType(object value, Type type)
-        {
-            if (type == typeof(int))
-            {
-                return int.Parse(value.ToString());
-            }
-            else if (type == typeof(float))
-            {
-                return float.Parse(value.ToString());
-            }
-            else if (type == typeof(bool))
-            {
-                string boolean = value.ToString();
-
-                if (boolean == "\"TRUE\"")
-                {
-                    return bool.Parse("True");
-                } else
-                {
-                    return bool.Parse("False");
-                }
-            }
-            else if (type == typeof(char))
-            {
-                string text = value.ToString();
-                char character = text[1];
-                return character;
-            }
-            else if (type == typeof(string))
-            {
-                String text = value.ToString();
-                // Remove the enclosing quotes from the string
-                text = text.Substring(1, text.Length - 2);
-                // Replace escape sequences with their corresponding characters
-                text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
-                return text;
-            }
-            else
-            {
-                throw new NotImplementedException();
             }
         }
 
