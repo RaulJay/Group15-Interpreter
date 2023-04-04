@@ -65,107 +65,27 @@ namespace Interpreter.Visitors
             {
                 if (Variables.ContainsKey(varNames[i].GetText()))
                 {
-                    // Declaration INT x = y = z = 3
-                    if (dec.Count(c => c == '=') > 1)
+                    Console.WriteLine(varNames[i].GetText() + "is already declared");
+                    continue;
+                }
+                if (declaration[i].Contains('='))
+                {
+                    if (flagExp < exp.Count())
                     {
-                        var decArray = dec.Split("=");
-                        for (int i = 0 ; i <  decArray.Length - 1 ; i++)
-                        {
-                            varName = decArray[i];
-                            value = decArray[decArray.Length - 1];
-                            Variable val = new Variable()
-                            {
-                                Name = varName,
-                                Value = value,
-                                DataType = typeName
-                            };
-                            Variables[varName] = val;
-                        }
-                    }
-                    // Declaration x = 3
-                    else
-                    {
-                        var equalIndex = dec.IndexOf('=');
-                        varName = dec.Substring(0, equalIndex);
-
-                        if (equalIndex + 1 == dec.Length - 1)
-                        {
-                            value = dec.Substring(equalIndex + 1);
-                        }
-                        else
-                        {
-                            value = dec.Substring(equalIndex + 1, dec.Length - 1);
-                        }
-
+                        varName = varNames[i].GetText();
                         Variable val = new Variable()
                         {
                             Name = varName,
-                            Value = value,
+                            Value = Visit(exp[flagExp]),
                             DataType = typeName
                         };
-
-<<<<<<< HEAD
-            // Visit each expression in the display statement
-            /*foreach (var expressionContext in context.expression())
-            {
-                Console.Write(Visit(expressionContext));
-            }*/
-            var exp = context.expression().GetText();
-            var val = context.GetText();
-            // to be deleted 
-            Variables["a"] = 1;
-            Variables["b"] = 2;
-            string[] varArr;
-            if (exp.Contains("&"))
-            {
-                int ctr = exp.Length;
-                varArr= new string[ctr];
-
-                for (int x = 0; x < ctr; x++)
-                {
-                    if(x + 1 < ctr)
-                    {
-                        if (exp[x + 1] == '&')
-                        {
-                            varArr[x] = exp[x].ToString();
-                        }
-                    }
-                    else
-                    {
-                        varArr[x - 1] = exp[x].ToString();
-                        break;
-                    }
-                    
-                }
-                foreach(var x in varArr)
-                {
-                    if (x == null) 
-                    {
-                       // do nothing
-                    } else
-                    {
-                        Console.Write(Variables[x.ToString()]);
-                    }
-                    
-                }
-            } else
-            {
-                if (Variables.TryGetValue(exp, out var value))
-                {
-                    Console.Write($"{value}");
-                }else
-                {
-                    Console.Write("No Variable exist");
-                }
-                
-=======
                         Variables[varName] = val;
+                        flagExp++;
                     }
                 }
-                // Declaration INT x
                 else
                 {
-                    varName = dec;
+                    varName = varNames[i].GetText();
                     Variable val = new Variable()
                     {
                         Name = varName,
@@ -174,10 +94,9 @@ namespace Interpreter.Visitors
                     };
                     Variables[varName] = val;
                 }
->>>>>>> 41a21b5807923ca4f6ba555860fc23454077c4a7
             }
 
-            return null;
+            return new object();
         }
 
         public static String TypeName(String typeName)
