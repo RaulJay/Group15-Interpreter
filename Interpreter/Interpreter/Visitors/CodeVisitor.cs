@@ -242,7 +242,7 @@ namespace Interpreter.Visitors
                     }
                     else
                     {
-                        Console.Write(Variables[x.ToString()]);
+                        Console.Write(Variables[x.ToString()].Value);
                     }
 
                 }
@@ -251,7 +251,7 @@ namespace Interpreter.Visitors
             {
                 if (Variables.TryGetValue(exp, out var value))
                 {
-                    Console.Write($"{value}");
+                    Console.Write(Variables[exp].Value);
                 }
                 else
                 {
@@ -324,14 +324,14 @@ namespace Interpreter.Visitors
 
 //            var operation = context.addOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
-            return operation switch
-            {
-                "+" => arithmeticOperation.Add(left, right),
-                "-" => arithmeticOperation.Subtract(left, right),
-                _ => throw new NotImplementedException(),
-            };
-#pragma warning restore CS8603 // Possible null reference return.
-        }
-    }
+//#pragma warning disable CS8603 // Possible null reference return.
+//            return operation switch
+//            {
+//                "+" => arithmeticOperation.Add(left, right),
+//                "-" => arithmeticOperation.Subtract(left, right),
+//                _ => throw new NotImplementedException(),
+//            };
+//#pragma warning restore CS8603 // Possible null reference return.
+//        }
+//    }
 }
