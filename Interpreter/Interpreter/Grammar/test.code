@@ -4,5 +4,5 @@
     CHAR a, b
     a = 'a'
     b = 'b'
-    DISPLAY: x & y & z
+    DISPLAY: "Hellow Wurld"
 END CODE

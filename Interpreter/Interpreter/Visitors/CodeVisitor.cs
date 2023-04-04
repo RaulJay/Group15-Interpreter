@@ -212,10 +212,13 @@ namespace Interpreter.Visitors
             string[] varArr;
             int ctr = exp.Length;
             varArr = new string[ctr];
+            /// $ new line
+            /// & concat
+            /// [] escape code for special characters
 
-            // Display value of variable 
-            // if (exp.Contains("&")) it will store the variable name in an array
-            // else it will display the value of the expression
+            /// Display value of variable 
+            /// if (exp.Contains("&")) it will store the variable name in an array
+            /// else it will display the value of the expression
 
             if (exp.Contains("&"))
             {
@@ -252,6 +255,10 @@ namespace Interpreter.Visitors
                 if (Variables.TryGetValue(exp, out var value))
                 {
                     Console.Write(Variables[exp].Value);
+                }
+                else if (exp.Contains('\"'))
+                {
+                    Console.Write(exp.Replace("\"" , ""));
                 }
                 else
                 {
