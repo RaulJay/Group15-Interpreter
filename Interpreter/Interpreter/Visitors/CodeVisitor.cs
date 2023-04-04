@@ -177,84 +177,135 @@ namespace Interpreter.Visitors
 
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
-            var varName = context.expression().GetText();
+            var exp = context.expression().GetText();
+            var val = context.GetText();
 
-            var value = Variables[varName].Value;
-            Console.Write(value);
-            return null;
-        }
+            string[] varArr;
+            int ctr = exp.Length;
+            varArr = new string[ctr];
 
+            // Display value of variable 
+            // if (exp.Contains("&")) it will store the variable name in an array
+            // else it will display the value of the expression
 
-        public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
-        {
-            if (context.literal().INTEGER() is { } i)
+            if (exp.Contains("&"))
             {
-                return int.Parse(i.GetText());
-            }
-            else if (context.literal().FLOATING() is { } f)
-            {
-                return float.Parse(f.GetText());
-            }
-            else if (context.literal().STRINGS() is { } s)
-            {
-                String text =  s.GetText();
-                // Remove the enclosing quotes from the string
-                text = text.Substring(1, text.Length - 2);
-                // Replace escape sequences with their corresponding characters
-                text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
-                return text;
-            }
-            else if (context.literal().CHARA() is { } c)
-            {
-                string text = c.GetText();
-                return text;
-            }
-            else if (context.literal().BOOLEAN() is { } t)
-            {
-                return bool.Parse(t.GetText());
+                for (int x = 0; x < ctr; x++)
+                {
+                    if (x + 1 < ctr)
+                    {
+                        if (exp[x + 1] == '&')
+                        {
+                            varArr[x] = exp[x].ToString();
+                        }
+                    }
+                    else
+                    {
+                        varArr[x] = exp[x].ToString();
+                    }
+
+                }
+                foreach (var x in varArr)
+                {
+                    if (x == null)
+                    {
+                        // do nothing
+                    }
+                    else
+                    {
+                        Console.Write(Variables[x.ToString()]);
+                    }
+
+                }
             }
             else
             {
-                return new object();
+                if (Variables.TryGetValue(exp, out var value))
+                {
+                    Console.Write($"{value}");
+                }
+                else
+                {
+                    Console.Write("No Variable exist");
+                }
+
             }
+
+            return null;
         }
-
-        public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
-        {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-
-            var operation = context.multOp().GetText();
-
-#pragma warning disable CS8603 // Possible null reference return.
-            return operation switch
-            {
-                "*" => arithmeticOperation.Multiply(left, right),
-                "/" => arithmeticOperation.Divide(left, right),
-                "%" => arithmeticOperation.Modulo(left, right),
-                _ => throw new NotImplementedException()
-            };
-#pragma warning restore CS8603 // Possible null reference return.
-        }
-
-        public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
-        {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-
-            var operation = context.addOp().GetText();
-
-#pragma warning disable CS8603 // Possible null reference return.
-            return operation switch
-            {
-                "+" => arithmeticOperation.Add(left, right),
-                "-" => arithmeticOperation.Subtract(left, right),
-                _ => throw new NotImplementedException(),
-            };
-#pragma warning restore CS8603 // Possible null reference return.
-        }
-
-
-
     }
+
+
+//        public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
+//        {
+//            if (context.literal().INTEGER() is { } i)
+//            {
+//                return int.Parse(i.GetText());
+//            }
+//            else if (context.literal().FLOATING() is { } f)
+//            {
+//                return float.Parse(f.GetText());
+//            }
+//            else if (context.literal().STRINGS() is { } s)
+//            {
+//                String text =  s.GetText();
+//                // Remove the enclosing quotes from the string
+//                text = text.Substring(1, text.Length - 2);
+//                // Replace escape sequences with their corresponding characters
+//                text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
+//                return text;
+//            }
+//            else if (context.literal().CHARA() is { } c)
+//            {
+//                string text = c.GetText();
+//                return text;
+//            }
+//            else if (context.literal().BOOLEAN() is { } t)
+//            {
+//                return bool.Parse(t.GetText());
+//            }
+//            else
+//            {
+//                return new object();
+//            }
+//        }
+
+//        public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
+//        {
+//            var left = Visit(context.expression(0));
+//            var right = Visit(context.expression(1));
+
+//            var operation = context.multOp().GetText();
+
+//#pragma warning disable CS8603 // Possible null reference return.
+//            return operation switch
+//            {
+//                "*" => arithmeticOperation.Multiply(left, right),
+//                "/" => arithmeticOperation.Divide(left, right),
+//                "%" => arithmeticOperation.Modulo(left, right),
+//                _ => throw new NotImplementedException()
+//            };
+//#pragma warning restore CS8603 // Possible null reference return.
+//        }
+
+//        public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
+//        {
+//            var left = Visit(context.expression(0));
+//            var right = Visit(context.expression(1));
+
+//            var operation = context.addOp().GetText();
+
+//#pragma warning disable CS8603 // Possible null reference return.
+//            return operation switch
+//            {
+//                "+" => arithmeticOperation.Add(left, right),
+//                "-" => arithmeticOperation.Subtract(left, right),
+//                _ => throw new NotImplementedException(),
+//            };
+//#pragma warning restore CS8603 // Possible null reference return.
+//        }
+
+
+
+    //}
 }
