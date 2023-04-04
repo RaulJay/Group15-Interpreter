@@ -77,7 +77,7 @@ data_type: INT | CHAR | BOOL | FLOAT | STRING;
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
 declaration_statement: data_type declaration NEWLINE?;
 
-assignment_statement: IDENTIFIER ASSIGN expression*;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
 
 
 expression
@@ -110,7 +110,7 @@ STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: DISPLAY':' expression NEWLINE?;
+display_statement: DISPLAY COLON expression NEWLINE?;
 
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;

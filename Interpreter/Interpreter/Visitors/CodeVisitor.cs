@@ -21,6 +21,10 @@ namespace Interpreter.Visitors
             {
                 return VisitDeclaration_statement(context.declaration_statement());
             }
+            else if (context.assignment_statement() != null)
+            {
+                return VisitAssignment_statement(context.assignment_statement());
+            }
             else if (context.display_statement() != null)
             {
                 return VisitDisplay_statement(context.display_statement());
@@ -28,6 +32,19 @@ namespace Interpreter.Visitors
             else
             {
                 return new object();
+            }
+        }
+
+        public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
+        {
+            var identifier = context.IDENTIFIER().GetText();
+            if (Variables.ContainsKey(identifier))
+            {
+                return Variables[identifier].Value;
+            }
+            else
+            {
+                throw new Exception($"Variable {identifier} is not declared");
             }
         }
 
@@ -83,6 +100,18 @@ namespace Interpreter.Visitors
             }
 
             return new object();
+        }
+
+        public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
+        {
+            var identifier = context.IDENTIFIER();
+            foreach (var i in identifier)
+            {
+                var expression = context.expression().Accept(this);
+                Variables[i.GetText()].Value = expression;
+            }
+
+            return null;
         }
 
         public static String TypeName(String typeName)
@@ -179,7 +208,9 @@ namespace Interpreter.Visitors
         {
             var varName = context.expression().GetText();
 
-            var value = Variables[varName].Value;
+            var value = Visit(context.expression());
+
+            //var value = Variables[varName].Value;
             Console.Write(value);
             return null;
         }
@@ -207,6 +238,8 @@ namespace Interpreter.Visitors
             else if (context.literal().CHARA() is { } c)
             {
                 string text = c.GetText();
+                text = Regex.Replace(text, "^\'|\'$|\\\\(.)", "$1");
+                char charaValue = text[0];
                 return text;
             }
             else if (context.literal().BOOLEAN() is { } t)
@@ -253,8 +286,5 @@ namespace Interpreter.Visitors
             };
 #pragma warning restore CS8603 // Possible null reference return.
         }
-
-
-
     }
 }
