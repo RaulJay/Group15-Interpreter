@@ -226,6 +226,26 @@ namespace Interpreter.Visitors
                         default:
                             throw new ArgumentException("Unary negation is not supported for this value type.");
                     }
+                case "++":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return ++intValue;
+                        case float floatValue:
+                            return ++floatValue;
+                        default:
+                            throw new ArgumentException("Unary increment is not supported for this value type.");
+                    }
+                case "--":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return --intValue;
+                        case float floatValue:
+                            return --floatValue;
+                        default:
+                            throw new ArgumentException("Unary decrement is not supported for this value type.");
+                    }
                 default:
                     throw new ArgumentException($"Unary operator {symbol} is not supported.");
             }
