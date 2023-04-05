@@ -77,12 +77,14 @@ data_type: INT | CHAR | BOOL | FLOAT | STRING;
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
 declaration_statement: data_type declaration NEWLINE?;
 
-assignment_statement: IDENTIFIER ASSIGN expression*;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
 
 
 expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
+    | unary_operator expression                 # unaryExpression
+    | RBRACK expression RBRACK                  # bracketExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression
@@ -97,6 +99,7 @@ compareOp: LT | GT | LTE | GTE | EQ | NEQ;
 boolOp: AND | OR ;
 exponentOp: POWER;
 
+
 literal: INTEGER
         | FLOATING
         | STRINGS
@@ -104,14 +107,15 @@ literal: INTEGER
         | CHARA
         ;
 
-INTEGER: [0-9]+;
+INTEGER: [-]?[0-9]+;
 FLOATING: [0-9]+ '.' [0-9]+;
 STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: DISPLAY':' expression NEWLINE?;
+unary_operator: PLUS | MINUS;
 
+display_statement: DISPLAY':' expression AND? NEWLINE?;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
