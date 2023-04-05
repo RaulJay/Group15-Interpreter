@@ -3,6 +3,7 @@ using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -163,9 +164,17 @@ namespace Interpreter.Visitors
 
             var value = Visit(context.expression());
 
-            //var value = Variables[varName].Value;
             Console.Write(value);
+
             return null;
+        }
+
+        public override object? VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            return $"{left}{right}";
         }
 
 
@@ -181,7 +190,7 @@ namespace Interpreter.Visitors
             }
             else if (context.literal().STRINGS() is { } s)
             {
-                String text =  s.GetText();
+                String text = s.GetText();
                 // Remove the enclosing quotes from the string
                 text = text.Substring(1, text.Length - 2);
                 // Replace escape sequences with their corresponding characters

@@ -32,6 +32,7 @@ EQ: '==';
 POWER: '**';
 DOUBLEQ: '\"';
 SINGLEQ: '\'';
+DOLLAR: '$';
 
 // Special Characters
 COMMA: ',';
@@ -83,6 +84,7 @@ assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
 expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
+    | expression AND expression                 # concatExpression
     | unary_operator expression                 # unaryExpression
     | RBRACK expression RBRACK                  # bracketExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
@@ -90,7 +92,7 @@ expression
     | expression multOp expression              # multiplicationExpression
     | expression addOp expression               # additionExpression
     | expression compareOp expression           # comparisonExpression
-    | expression boolOp expression              # booleanExpression
+    | expression boolOp expression              # booleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
