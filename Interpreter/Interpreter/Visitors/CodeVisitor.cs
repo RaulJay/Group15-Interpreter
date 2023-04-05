@@ -238,7 +238,7 @@ namespace Interpreter.Visitors
 
             var operation = context.multOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8603 // Possible null reference return.
             return operation switch
             {
                 "*" => arithmeticOperation.Multiply(left, right),
@@ -246,7 +246,7 @@ namespace Interpreter.Visitors
                 "%" => arithmeticOperation.Modulo(left, right),
                 _ => throw new NotImplementedException()
             };
-#pragma warning restore CS8603 // Possible null reference return.
+            #pragma warning restore CS8603 // Possible null reference return.
         }
 
         public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
@@ -256,14 +256,14 @@ namespace Interpreter.Visitors
 
             var operation = context.addOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8603 // Possible null reference return.
             return operation switch
             {
                 "+" => arithmeticOperation.Add(left, right),
                 "-" => arithmeticOperation.Subtract(left, right),
                 _ => throw new NotImplementedException(),
             };
-#pragma warning restore CS8603 // Possible null reference return.
+            #pragma warning restore CS8603 // Possible null reference return.
         }
     }
 }
