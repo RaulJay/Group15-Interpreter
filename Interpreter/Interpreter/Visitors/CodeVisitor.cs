@@ -52,7 +52,6 @@ namespace Interpreter.Visitors
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
             String varName;
-            object value;
             // Extract variable data type
             var type = Visit(context.data_type()) as Type;
             var typeName = TypeName(type.Name);
@@ -215,7 +214,62 @@ namespace Interpreter.Visitors
             }
         }
 
-        
+        public override object VisitUnaryExpression([NotNull] CodeGrammarParser.UnaryExpressionContext context)
+        {
+            return UnaryOperation(context.unary_operator().GetText(), Visit(context.expression()));
+        }
+
+        public static object UnaryOperation(string symbol, object value)
+        {
+            switch (symbol)
+            {
+                case "+":
+                    return value;
+                case "-":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return -intValue;
+                        case float floatValue:
+                            return -floatValue;
+                        default:
+                            throw new ArgumentException("Unary negation is not supported for this value type.");
+                    }
+                case "++":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return ++intValue;
+                        case float floatValue:
+                            return ++floatValue;
+                        default:
+                            throw new ArgumentException("Unary increment is not supported for this value type.");
+                    }
+                case "--":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return --intValue;
+                        case float floatValue:
+                            return --floatValue;
+                        default:
+                            throw new ArgumentException("Unary decrement is not supported for this value type.");
+                    }
+                default:
+                    throw new ArgumentException($"Unary operator {symbol} is not supported.");
+            }
+        }
+
+        public override object VisitBracketExpression([NotNull] CodeGrammarParser.BracketExpressionContext context)
+        {
+            return Visit(context.expression());
+        }
+
+        public override object VisitParenthesizeExpression([NotNull] CodeGrammarParser.ParenthesizeExpressionContext context)
+        {
+            return Visit(context.expression());
+        }
+
         public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -223,7 +277,7 @@ namespace Interpreter.Visitors
 
             var operation = context.multOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8603 // Possible null reference return.
             return operation switch
             {
                 "*" => arithmeticOperation.Multiply(left, right),
@@ -231,7 +285,7 @@ namespace Interpreter.Visitors
                 "%" => arithmeticOperation.Modulo(left, right),
                 _ => throw new NotImplementedException()
             };
-#pragma warning restore CS8603 // Possible null reference return.
+            #pragma warning restore CS8603 // Possible null reference return.
         }
 
         public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
@@ -241,14 +295,59 @@ namespace Interpreter.Visitors
 
             var operation = context.addOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8603 // Possible null reference return.
             return operation switch
             {
                 "+" => arithmeticOperation.Add(left, right),
                 "-" => arithmeticOperation.Subtract(left, right),
                 _ => throw new NotImplementedException(),
             };
-#pragma warning restore CS8603 // Possible null reference return.
+            #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public override object VisitComparisonExpression([NotNull] CodeGrammarParser.ComparisonExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var op = context.compareOp().GetText();
+            var right = Visit(context.expression(1));
+            var results = context;
+
+            switch (op)
+            {
+                case "<":
+                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
+                case "<=":
+                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
+                case ">":
+                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
+                case ">=":
+                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE";
+                case "==":
+                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
+                case "<>":
+                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
+                default:
+                    throw new Exception($"Invalid comparison operator: {op}");
+            }
+        }
+
+        public override object VisitBooleanExpression([NotNull] CodeGrammarParser.BooleanExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+            var op = context.boolOp().GetText();
+
+            switch (op)
+            {
+                case "AND":
+                    return (dynamic)left && right;
+                case "OR":
+                    return (dynamic)left || right;
+                case "NOT":
+                    return !(dynamic)left && right;
+                default:
+                    throw new NotSupportedException($"Boolean operator {context.boolOp().GetText()} is not supported.");
+            }
         }
     }
 }

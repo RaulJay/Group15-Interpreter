@@ -21,7 +21,7 @@ PLUS: '+';
 MOD: '%';
 MULT: '*';
 MINUS: '-';
-NEQ: '!=';
+NEQ: '<>';
 NOT: '!';
 OR: '|';
 GT: '>';
@@ -85,6 +85,8 @@ expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
     | expression AND expression                 # concatExpression
+    | unary_operator expression                 # unaryExpression
+    | RBRACK expression RBRACK                  # bracketExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression
@@ -96,8 +98,9 @@ expression
 multOp: MULT | DIV | MOD ;
 addOp: PLUS | MINUS;
 compareOp: LT | GT | LTE | GTE | EQ | NEQ;
-boolOp: AND | OR ;
+boolOp: AND | OR | NOT;
 exponentOp: POWER;
+
 
 literal: INTEGER
         | FLOATING
@@ -106,13 +109,15 @@ literal: INTEGER
         | CHARA
         ;
 
-INTEGER: [0-9]+;
+INTEGER: [-]?[0-9]+;
 FLOATING: [0-9]+ '.' [0-9]+;
 STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-display_statement: DISPLAY COLON expression NEWLINE?;
+unary_operator: PLUS | MINUS;
+
+display_statement: DISPLAY':' expression AND? NEWLINE?;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
