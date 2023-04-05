@@ -331,23 +331,14 @@ namespace Interpreter.Visitors
             switch (op)
             {
                 case "AND":
-                    return (dynamic)left && right ? "TRUE" : "FALSE";
+                    return (dynamic)left && right;
                 case "OR":
-                    return (dynamic)left || right ? "TRUE" : "FALSE";
+                    return (dynamic)left || right;
                 case "NOT":
-                    switch (left)
-                    {
-                        case "TRUE":
-                            return (dynamic)right ? "FALSE" : "TRUE";
-                        case "FALSE":
-                            return (dynamic)right ? "TRUE" : "FALSE";
-                        default:
-                            throw new Exception();
-                    }
-
+                    return !(dynamic)left && right;
+                default:
+                    throw new NotSupportedException($"Boolean operator {context.boolOp().GetText()} is not supported.");
             }
-
-            return base.VisitBooleanExpression(context);
         }
     }
 }
