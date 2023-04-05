@@ -96,7 +96,7 @@ expression
 multOp: MULT | DIV | MOD ;
 addOp: PLUS | MINUS;
 compareOp: LT | GT | LTE | GTE | EQ | NEQ;
-boolOp: AND | OR ;
+boolOp: AND | OR | NOT;
 exponentOp: POWER;
 
 

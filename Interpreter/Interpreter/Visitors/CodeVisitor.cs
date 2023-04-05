@@ -321,5 +321,33 @@ namespace Interpreter.Visitors
                     throw new Exception($"Invalid comparison operator: {op}");
             }
         }
+
+        public override object VisitBooleanExpression([NotNull] CodeGrammarParser.BooleanExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+            var op = context.boolOp().GetText();
+
+            switch (op)
+            {
+                case "AND":
+                    return (dynamic)left && right ? "TRUE" : "FALSE";
+                case "OR":
+                    return (dynamic)left || right ? "TRUE" : "FALSE";
+                case "NOT":
+                    switch (left)
+                    {
+                        case "TRUE":
+                            return (dynamic)right ? "FALSE" : "TRUE";
+                        case "FALSE":
+                            return (dynamic)right ? "TRUE" : "FALSE";
+                        default:
+                            throw new Exception();
+                    }
+
+            }
+
+            return base.VisitBooleanExpression(context);
+        }
     }
 }
