@@ -165,111 +165,13 @@ namespace Interpreter.Visitors
 
             var value = Visit(context.expression());
 
-            //var value = Variables[varName].Value;
             Console.Write(value);
 
-            //var exp = context.expression().GetText();
-            //var val = context.GetText();
-            //string[] varArr;
-            //int ctr = exp.Length;
-            //varArr = new string[ctr];
-            ///// $ new line
-            ///// & concat
-            ///// [] escape code for special characters
-
-            //// Display value of variable 
-            //// if (exp.Contains("&")) it will store the variable name in an array
-            //// else it will display the value of the expression
-            ///// Display value of variable 
-            ///// if (exp.Contains("&")) it will store the variable name in an array
-            ///// else it will display the value of the expression
-
-            //if (exp.Contains("&"))
-            //{
-            //    for (int x = 0; x < ctr; x++)
-            //    {
-            //        if (x + 1 < ctr)
-            //        {
-            //            if (exp[x + 1] == '&')
-            //            {
-            //                varArr[x] = exp[x].ToString();
-            //            }
-            //        }
-            //        else
-            //        {
-            //            varArr[x] = exp[x].ToString();
-            //        }
-
-            //    }
-            //    foreach (var x in varArr)
-            //    {
-            //        if (x == null)
-            //        {
-            //            // do nothing
-            //        }
-            //        else
-            //        {
-            //            Console.Write(Variables[x.ToString()].Value);
-            //        }
-
-            //    }
-            //}
-            //else
-            //{
-            //    if (Variables.TryGetValue(exp, out var value))
-            //    {
-            //        Console.Write(Variables[exp].Value);
-            //    }
-            //    else if (exp.Contains('\"'))
-            //    {
-            //        Console.Write(exp.Replace("\"", ""));
-            //    }
-            //    else
-            //    {
-            //        Console.Write("No Variable exist");
-            //    }
-
-            //}
             return null;
         }
 
         public override object? VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
-            //// Get the left and right expressions;
-            //var left = context.expression()[0];
-            //var right = context.expression()[1];
-            //Console.WriteLine(left + "sud left");
-            //Console.WriteLine(right);
-            //var output = "";
-            //// Check if both left and right are variable names
-            //if (left == null && right == null)
-            //{
-            //    throw new NullReferenceException();
-            //}
-            //if (left != null)
-            //{
-            //    if (Variables.ContainsKey(left.ToString()!))
-            //    {
-            //        output += Variables[left.ToString()!];
-            //    }
-            //    else
-            //    {
-            //        output += left.ToString();
-            //    }
-            //}
-            //if (right != null)
-            //{
-            //    if (Variables.ContainsKey(right.ToString()!))
-            //    {
-            //        output += Variables[right.ToString()!];
-            //    }
-            //    else
-            //    {
-            //        output += right.ToString();
-            //    }
-            //}
-            //return output;
-
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
 

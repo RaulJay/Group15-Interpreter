@@ -32,6 +32,7 @@ EQ: '==';
 POWER: '**';
 DOUBLEQ: '\"';
 SINGLEQ: '\'';
+DOLLAR: '$';
 
 // Special Characters
 COMMA: ',';
@@ -84,6 +85,7 @@ expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
     | expression AND expression                 # concatExpression
+    | expression 
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression
