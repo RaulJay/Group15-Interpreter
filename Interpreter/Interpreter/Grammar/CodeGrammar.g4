@@ -21,7 +21,7 @@ PLUS: '+';
 MOD: '%';
 MULT: '*';
 MINUS: '-';
-NEQ: '!=';
+NEQ: '<>';
 NOT: '!';
 OR: '|';
 GT: '>';
