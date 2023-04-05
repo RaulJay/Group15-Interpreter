@@ -51,7 +51,6 @@ namespace Interpreter.Visitors
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
             String varName;
-            object value;
             // Extract variable data type
             var type = Visit(context.data_type()) as Type;
             var typeName = TypeName(type.Name);
@@ -203,6 +202,32 @@ namespace Interpreter.Visitors
             else
             {
                 return new object();
+            }
+        }
+
+        public override object VisitUnaryExpression([NotNull] CodeGrammarParser.UnaryExpressionContext context)
+        {
+            return UnaryOperation(context.unary_operator().GetText(), Visit(context.expression()));
+        }
+
+        public static object UnaryOperation(string symbol, object value)
+        {
+            switch (symbol)
+            {
+                case "+":
+                    return value;
+                case "-":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return -intValue;
+                        case float floatValue:
+                            return -floatValue;
+                        default:
+                            throw new ArgumentException("Unary negation is not supported for this value type.");
+                    }
+                default:
+                    throw new ArgumentException($"Unary operator {symbol} is not supported.");
             }
         }
 
