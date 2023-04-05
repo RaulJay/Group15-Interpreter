@@ -315,7 +315,7 @@ namespace Interpreter.Visitors
                     return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE";
                 case "==":
                     return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
-                case "!=":
+                case "<>":
                     return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
