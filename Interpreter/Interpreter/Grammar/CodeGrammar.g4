@@ -84,6 +84,7 @@ expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
     | unary_operator expression                 # unaryExpression
+    | RBRACK expression RBRACK                  # bracketExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression

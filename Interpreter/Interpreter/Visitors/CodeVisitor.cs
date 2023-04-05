@@ -231,6 +231,16 @@ namespace Interpreter.Visitors
             }
         }
 
+        public override object VisitBracketExpression([NotNull] CodeGrammarParser.BracketExpressionContext context)
+        {
+            return Visit(context.expression());
+        }
+
+        public override object VisitParenthesizeExpression([NotNull] CodeGrammarParser.ParenthesizeExpressionContext context)
+        {
+            return Visit(context.expression());
+        }
+
         public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -238,7 +248,7 @@ namespace Interpreter.Visitors
 
             var operation = context.multOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8603 // Possible null reference return.
             return operation switch
             {
                 "*" => arithmeticOperation.Multiply(left, right),
@@ -246,7 +256,7 @@ namespace Interpreter.Visitors
                 "%" => arithmeticOperation.Modulo(left, right),
                 _ => throw new NotImplementedException()
             };
-#pragma warning restore CS8603 // Possible null reference return.
+            #pragma warning restore CS8603 // Possible null reference return.
         }
 
         public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
@@ -256,14 +266,40 @@ namespace Interpreter.Visitors
 
             var operation = context.addOp().GetText();
 
-#pragma warning disable CS8603 // Possible null reference return.
+            #pragma warning disable CS8603 // Possible null reference return.
             return operation switch
             {
                 "+" => arithmeticOperation.Add(left, right),
                 "-" => arithmeticOperation.Subtract(left, right),
                 _ => throw new NotImplementedException(),
             };
-#pragma warning restore CS8603 // Possible null reference return.
+            #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public override object VisitComparisonExpression([NotNull] CodeGrammarParser.ComparisonExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var op = context.compareOp().GetText();
+            var right = Visit(context.expression(1));
+            var results = context;
+
+            switch (op)
+            {
+                case "<":
+                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
+                case "<=":
+                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
+                case ">":
+                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
+                case ">=":
+                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE";
+                case "==":
+                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
+                case "!=":
+                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
+                default:
+                    throw new Exception($"Invalid comparison operator: {op}");
+            }
         }
     }
 }
