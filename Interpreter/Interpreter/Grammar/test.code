@@ -1,7 +1,5 @@
 ﻿BEGIN CODE
     STRING f = "Hello World"
-    INT x , y , z = 3
-    DISPLAY: f
-    DISPLAY: z
-    DISPLAY: y
+    INT x = 1 , y = 2 , z = 3
+    DISPLAY: y & z & x
 END CODE

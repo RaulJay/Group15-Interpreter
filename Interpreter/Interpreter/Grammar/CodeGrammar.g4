@@ -83,12 +83,13 @@ assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
 expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
+    | expression AND expression                 # concatExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
     | expression exponentOp expression          # exponentExpression    
     | expression multOp expression              # multiplicationExpression
     | expression addOp expression               # additionExpression
     | expression compareOp expression           # comparisonExpression
-    | expression boolOp expression              # booleanExpression
+    | expression boolOp expression              # booleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
@@ -111,7 +112,6 @@ CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
 display_statement: DISPLAY COLON expression NEWLINE?;
-
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
