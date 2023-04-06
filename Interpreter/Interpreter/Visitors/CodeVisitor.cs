@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime.Misc;
 using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
+using Microsoft.Win32.SafeHandles;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ConstrainedExecution;
@@ -185,6 +186,13 @@ namespace Interpreter.Visitors
             return $"{left}\n{right}";
         }
 
+        public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
+        {
+            var exp = context.symbol().GetText();
+
+
+            return $"{exp}";
+        }
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {
