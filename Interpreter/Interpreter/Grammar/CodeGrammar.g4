@@ -82,18 +82,19 @@ assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
 
 
 expression
-    : literal                                   # literalExpression
-    | IDENTIFIER                                # identifierExpression
-    | expression AND expression                 # concatExpression
-    | expression DOLLAR expression              # newlineExpression
-    | unary_operator expression                 # unaryExpression
-    | RBRACK expression RBRACK                  # bracketExpression
-    | LPAREN expression RPAREN                  # parenthesizeExpression
-    | expression exponentOp expression          # exponentExpression    
-    | expression multOp expression              # multiplicationExpression
-    | expression addOp expression               # additionExpression
-    | expression compareOp expression           # comparisonExpression
-    | expression boolOp expression              # booleanExpression 
+    : literal                               # literalExpression
+    | IDENTIFIER                            # identifierExpression
+    | LBRACK symbol RBRACK                  # specialCharExpression
+    | expression AND expression             # concatExpression
+    | expression DOLLAR expression          # newlineExpression
+    | unary_operator expression             # unaryExpression
+    | RBRACK expression RBRACK              # bracketExpression
+    | LPAREN expression RPAREN              # parenthesizeExpression
+    | expression exponentOp expression      # exponentExpression    
+    | expression multOp expression          # multiplicationExpression
+    | expression addOp expression           # additionExpression
+    | expression compareOp expression       # comparisonExpression
+    | expression boolOp expression          # booleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
@@ -119,6 +120,13 @@ BOOLEAN: TRUE | FALSE;
 unary_operator: PLUS | MINUS;
 
 display_statement: DISPLAY':' expression AND? NEWLINE?;
+
+symbol:
+	LPAREN
+	RPAREN
+	COMMA
+	COLON
+	;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
