@@ -135,7 +135,7 @@ namespace Interpreter.Visitors
 
             var value = Visit(context.expression());
 
-            value = value.GetType() == typeof(bool) ? value.ToString().ToUpper() : value;
+            value = value.GetType() == typeof(bool) ? value.ToString()!.ToUpper() : value;
 
             Console.Write(value);
             return new object();

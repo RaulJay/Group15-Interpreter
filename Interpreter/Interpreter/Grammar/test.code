@@ -1,4 +1,6 @@
 ﻿BEGIN CODE
     BOOL x = "TRUE"
-    DISPLAY: x
+    BOOL y = "TRUE"
+    BOOL z = x AND y
+    DISPLAY: z
 END CODE

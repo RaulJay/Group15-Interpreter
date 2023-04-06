@@ -33,6 +33,7 @@ POWER: '**';
 DOUBLEQ: '\"';
 SINGLEQ: '\'';
 DOLLAR: '$';
+AMPERSAND: '&';
 
 // Special Characters
 COMMA: ',';
@@ -85,7 +86,7 @@ expression
     : literal                               # literalExpression
     | IDENTIFIER                            # identifierExpression
     | LBRACK symbol RBRACK                  # specialCharExpression
-    | expression AND expression             # concatExpression
+    | expression AMPERSAND expression       # concatExpression
     | expression DOLLAR expression          # newlineExpression
     | unary_operator expression             # unaryExpression
     | RBRACK expression RBRACK              # bracketExpression
