@@ -2,5 +2,5 @@
     STRING f = "Hello World"
     INT x = 1 , y = 2 , z = 3
     DISPLAY: "test"
-    DISPLAY: [:]
+    DISPLAY: [!]
 END CODE

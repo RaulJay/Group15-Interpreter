@@ -126,6 +126,21 @@ symbol:
 	RPAREN
 	COMMA
 	COLON
+    AND
+    ASSIGN
+    DIV
+    PLUS
+    MOD
+    MULT
+    MINUS
+    NEQ
+    NOT
+    OR
+    GT
+    LT
+    DOUBLEQ
+    SINGLEQ
+    DOLLAR
 	;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
