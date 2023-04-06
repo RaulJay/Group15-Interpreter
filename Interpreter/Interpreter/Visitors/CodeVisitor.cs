@@ -62,7 +62,7 @@ namespace Interpreter.Visitors
 
                         if (valueType != type)
                         {
-                            SemanticErrorHandler.TypeErrorDeclaration(type, literalValue, context.data_type().GetText(), context.GetText());
+                            SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
                         }
 
                         Variable val = new Variable()
@@ -135,14 +135,19 @@ namespace Interpreter.Visitors
 
             var value = Visit(context.expression());
 
+            value = value.GetType() == typeof(bool) ? value.ToString().ToUpper() : value;
+
             Console.Write(value);
             return new object();
         }
 
-        public override object? VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
+        public override object VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
+
+            left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
+            right = left.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
 
             return $"{left}{right}";
         }

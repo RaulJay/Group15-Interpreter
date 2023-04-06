@@ -1,4 +1,4 @@
 ﻿BEGIN CODE
-    BOOL x = "True"
+    BOOL x = "TRUE"
     DISPLAY: x
 END CODE
