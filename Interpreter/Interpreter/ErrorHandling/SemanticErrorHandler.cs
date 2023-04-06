@@ -50,5 +50,23 @@ namespace Interpreter.ErrorHandling
             Console.Error.WriteLine($"Literal Value {value} is not recognized as type of {dataType}");
             Environment.Exit(400);
         }
+
+        //public static void BoolTypeErrorDeclaration(Type type, object value, string dataType, string text)
+        //{
+        //    int location = CodeLine(text);
+
+        //    Console.Error.WriteLine($"Semantic Error: Statement Declaration at line {location}");
+        //    Console.Error.WriteLine($"Bolean Value {value} is not recognized as type of {dataType}");
+        //    Environment.Exit(400);
+        //}
+
+        //public static void BoolTypeErrorAssignment(Type type, object value, string dataType, string text)
+        //{
+        //    int location = CodeLine(text);
+
+        //    Console.Error.WriteLine($"Semantic Error: Statement Assignment at line {location}");
+        //    Console.Error.WriteLine($"Literal Value {value} is not recognized as type of {dataType}");
+        //    Environment.Exit(400);
+        //}
     }
 }

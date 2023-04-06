@@ -1,5 +1,4 @@
 ﻿BEGIN CODE
-    INT x
-    x = "hello"
+    BOOL x = "True"
     DISPLAY: x
 END CODE

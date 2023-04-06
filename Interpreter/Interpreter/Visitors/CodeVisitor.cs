@@ -154,6 +154,15 @@ namespace Interpreter.Visitors
                 String text =  s.GetText();
                 text = text.Substring(1, text.Length - 2);
                 text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
+
+                if (text == "TRUE")
+                {
+                    return bool.Parse("true");
+                } 
+                else if (text == "FALSE")
+                {
+                    return bool.Parse("false");
+                }
                 return text;
             }
             else if (context.literal().CHARA() is { } c)
@@ -162,10 +171,6 @@ namespace Interpreter.Visitors
                 text = Regex.Replace(text, "^\'|\'$|\\\\(.)", "$1");
                 char charaValue = text[0];
                 return text;
-            }
-            else if (context.literal().BOOLEAN() is { } t)
-            {
-                return bool.Parse(t.GetText());
             }
             else
             {
