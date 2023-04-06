@@ -21,7 +21,7 @@ PLUS: '+';
 MOD: '%';
 MULT: '*';
 MINUS: '-';
-NEQ: '!=';
+NEQ: '<>';
 NOT: '!';
 OR: '|';
 GT: '>';
@@ -123,7 +123,7 @@ if_statement: IF LPAREN expression RPAREN if_block (ELSE ifelse_block)?;
 
 if_block: BEGINIF statement* ENDIF;
 
-ifelse_block: block | if_block;
+ifelse_block: if_statement | if_block;
 
 block: 'update me later hehe';
 

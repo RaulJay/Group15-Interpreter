@@ -295,11 +295,38 @@ namespace Interpreter.Visitors
                     return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE";
                 case "==":
                     return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
-                case "!=":
+                case "<>":
                     return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
             }
+        }
+
+        public override object VisitIf_statement([NotNull] CodeGrammarParser.If_statementContext context)
+        {
+            var condition = (bool)Visit(context.expression());
+            if (condition)
+            {
+                return Visit(context.if_block());
+            }
+            else if (context.ifelse_block() != null)
+            {
+                return Visit(context.ifelse_block());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public override object VisitIf_block([NotNull] CodeGrammarParser.If_blockContext context)
+        {
+            return VisitChildren(context);
+        }
+
+        public override object VisitIfelse_block([NotNull] CodeGrammarParser.Ifelse_blockContext context)
+        {
+            return VisitChildren(context);
         }
     }
 }
