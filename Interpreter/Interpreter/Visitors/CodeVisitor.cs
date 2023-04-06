@@ -177,6 +177,14 @@ namespace Interpreter.Visitors
             return $"{left}{right}";
         }
 
+        public override object VisitNewlineExpression([NotNull] CodeGrammarParser.NewlineExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            return $"{left}\n{right}";
+        }
+
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {
