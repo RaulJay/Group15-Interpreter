@@ -85,6 +85,7 @@ expression
     : literal                                   # literalExpression
     | IDENTIFIER                                # identifierExpression
     | expression AND expression                 # concatExpression
+    | expression DOLLAR expression              # newlineExpression
     | unary_operator expression                 # unaryExpression
     | RBRACK expression RBRACK                  # bracketExpression
     | LPAREN expression RPAREN                  # parenthesizeExpression
