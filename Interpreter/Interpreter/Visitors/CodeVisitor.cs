@@ -1,11 +1,13 @@
 ﻿using Antlr4.Runtime.Misc;
 using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
+using Interpreter.ErrorHandling;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using System.Linq.Expressions;
 
 namespace Interpreter.Visitors
 {
@@ -13,6 +15,7 @@ namespace Interpreter.Visitors
     {
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
+        private SemanticErrorHandler semanticErrorHandler = new SemanticErrorHandler();
 
 
         public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
