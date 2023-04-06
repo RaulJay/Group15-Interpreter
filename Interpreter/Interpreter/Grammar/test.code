@@ -1,5 +1,5 @@
 ﻿BEGIN CODE
-    INT x = 3
-    FLOAT y = 'a'
+    INT x
+    x = "hello"
     DISPLAY: x
 END CODE

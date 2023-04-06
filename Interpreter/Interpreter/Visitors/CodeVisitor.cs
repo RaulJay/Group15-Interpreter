@@ -60,11 +60,12 @@ namespace Interpreter.Visitors
 
                         if (valueType != type)
                         {
-                            SemanticErrorHandler.TypeError(type, literalValue, context.data_type().GetText(), context.GetText());
+                            SemanticErrorHandler.TypeErrorDeclaration(type, literalValue, context.data_type().GetText(), context.GetText());
                         }
 
                         Variable val = new Variable()
                         {
+                            Type = context.data_type().GetText(),
                             Name = varName,
                             Value = Visit(exp[flagExp]),
                             DataType = type
@@ -78,6 +79,7 @@ namespace Interpreter.Visitors
                     varName = varNames[i].GetText();
                     Variable val = new Variable()
                     {
+                        Type = context.data_type().GetText(),
                         Name = varName,
                         Value = null,
                         DataType = type
@@ -95,38 +97,15 @@ namespace Interpreter.Visitors
             foreach (var i in identifier)
             {
                 var expression = context.expression().Accept(this);
+
+                if (Variables[i.GetText()].DataType != expression.GetType())
+                {
+                    SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
+                }
                 Variables[i.GetText()].Value = expression;
             }
 
-            return null;
-        }
-
-        public static String TypeName(String typeName)
-        {
-            String typeDisplayName;
-            switch (typeName)
-            {
-                case "Int32":
-                    typeDisplayName = "int";
-                    break;
-                case "Single":
-                    typeDisplayName = "float";
-                    break;
-                case "Boolean":
-                    typeDisplayName = "bool";
-                    break;
-                case "Char":
-                    typeDisplayName = "char";
-                    break;
-                case "String":
-                    typeDisplayName = "string";
-                    break;
-                default:
-                    typeDisplayName = typeName;
-                    break;
-            }
-
-            return typeDisplayName;
+            return new object();
         }
 
         public override object VisitData_type([NotNull] CodeGrammarParser.Data_typeContext context)
@@ -156,7 +135,7 @@ namespace Interpreter.Visitors
 
             //var value = Variables[varName].Value;
             Console.Write(value);
-            return null;
+            return new object();
         }
 
 

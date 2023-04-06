@@ -33,7 +33,7 @@ namespace Interpreter.ErrorHandling
 
             return 0;
         }
-        public static void TypeError(Type type, object value, string dataType, string text)
+        public static void TypeErrorDeclaration(Type type, object value, string dataType, string text)
         {
             int location = CodeLine(text);
 
@@ -42,8 +42,12 @@ namespace Interpreter.ErrorHandling
             Environment.Exit(400);
         }
 
-        public static void boolError(string type, object value)
+        public static void TypeErrorAssignment(Type type, object value, string dataType, string text)
         {
+            int location = CodeLine(text);
+
+            Console.Error.WriteLine($"Semantic Error: Statement Assignment at line {location}");
+            Console.Error.WriteLine($"Literal Value {value} is not recognized as type of {dataType}");
             Environment.Exit(400);
         }
     }
