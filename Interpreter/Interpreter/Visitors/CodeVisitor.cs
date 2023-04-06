@@ -1,9 +1,11 @@
 ﻿using Antlr4.Runtime.Misc;
 using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
+using Microsoft.Win32.SafeHandles;
 using Interpreter.ErrorHandling;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -133,11 +135,33 @@ namespace Interpreter.Visitors
 
             var value = Visit(context.expression());
 
-            //var value = Variables[varName].Value;
             Console.Write(value);
             return new object();
         }
 
+        public override object? VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            return $"{left}{right}";
+        }
+
+        public override object VisitNewlineExpression([NotNull] CodeGrammarParser.NewlineExpressionContext context)
+        {
+            var left = Visit(context.expression(0));
+            var right = Visit(context.expression(1));
+
+            return $"{left}\n{right}";
+        }
+
+        public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
+        {
+            var exp = context.symbol().GetText();
+
+
+            return $"{exp}";
+        }
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {
@@ -199,6 +223,26 @@ namespace Interpreter.Visitors
                         default:
                             throw new ArgumentException("Unary negation is not supported for this value type.");
                     }
+                case "++":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return ++intValue;
+                        case float floatValue:
+                            return ++floatValue;
+                        default:
+                            throw new ArgumentException("Unary increment is not supported for this value type.");
+                    }
+                case "--":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return --intValue;
+                        case float floatValue:
+                            return --floatValue;
+                        default:
+                            throw new ArgumentException("Unary decrement is not supported for this value type.");
+                    }
                 default:
                     throw new ArgumentException($"Unary operator {symbol} is not supported.");
             }
@@ -259,19 +303,38 @@ namespace Interpreter.Visitors
             switch (op)
             {
                 case "<":
-                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
+                    return (dynamic)left < (dynamic)right? "True": "False";
                 case "<=":
-                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left <= (dynamic)right ? "True" : "False";
                 case ">":
-                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left > (dynamic)right ? "True" : "False";
                 case ">=":
-                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left >= (dynamic)right ? "True" : "False"; ;
                 case "==":
-                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
-                case "!=":
-                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left == (dynamic)right ? "True" : "False";
+                case "<>":
+                    return (dynamic)left != (dynamic)right ? "True" : "False";
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
+            }
+        }
+
+        public override object VisitBooleanExpression([NotNull] CodeGrammarParser.BooleanExpressionContext context)
+        {
+            var left = Convert.ToBoolean(Visit(context.expression(0)));
+            var right = Convert.ToBoolean(Visit(context.expression(1)));
+            var op = context.boolOp().GetText();
+
+            switch (op)
+            {
+                case "AND":
+                    return (dynamic)left && right;
+                case "OR":
+                    return (dynamic)left || right;
+                case "NOT":
+                    return !(dynamic)left && right;
+                default:
+                    throw new NotSupportedException($"Boolean operator {context.boolOp().GetText()} is not supported.");
             }
         }
     }

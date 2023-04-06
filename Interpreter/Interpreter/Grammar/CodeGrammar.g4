@@ -14,16 +14,16 @@ ENDIF: 'END IF';
 DISPLAY: 'DISPLAY';
 
 // Operators
-AND: '&';
+AND: 'AND';
 ASSIGN: '=';
 DIV: '/';
 PLUS: '+';
 MOD: '%';
 MULT: '*';
 MINUS: '-';
-NEQ: '!=';
-NOT: '!';
-OR: '|';
+NEQ: '<>';
+NOT: 'NOT';
+OR: 'OR';
 GT: '>';
 GTE: '>=';
 LT: '<';
@@ -32,6 +32,7 @@ EQ: '==';
 POWER: '**';
 DOUBLEQ: '\"';
 SINGLEQ: '\'';
+DOLLAR: '$';
 
 // Special Characters
 COMMA: ',';
@@ -81,22 +82,25 @@ assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
 
 
 expression
-    : literal                                   # literalExpression
-    | IDENTIFIER                                # identifierExpression
-    | unary_operator expression                 # unaryExpression
-    | RBRACK expression RBRACK                  # bracketExpression
-    | LPAREN expression RPAREN                  # parenthesizeExpression
-    | expression exponentOp expression          # exponentExpression    
-    | expression multOp expression              # multiplicationExpression
-    | expression addOp expression               # additionExpression
-    | expression compareOp expression           # comparisonExpression
-    | expression boolOp expression              # booleanExpression
+    : literal                               # literalExpression
+    | IDENTIFIER                            # identifierExpression
+    | LBRACK symbol RBRACK                  # specialCharExpression
+    | expression AND expression             # concatExpression
+    | expression DOLLAR expression          # newlineExpression
+    | unary_operator expression             # unaryExpression
+    | RBRACK expression RBRACK              # bracketExpression
+    | LPAREN expression RPAREN              # parenthesizeExpression
+    | expression exponentOp expression      # exponentExpression    
+    | expression multOp expression          # multiplicationExpression
+    | expression addOp expression           # additionExpression
+    | expression compareOp expression       # comparisonExpression
+    | expression boolOp expression          # booleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
 addOp: PLUS | MINUS;
 compareOp: LT | GT | LTE | GTE | EQ | NEQ;
-boolOp: AND | OR ;
+boolOp: AND | OR | NOT;
 exponentOp: POWER;
 
 
@@ -116,6 +120,28 @@ BOOLEAN: TRUE | FALSE;
 unary_operator: PLUS | MINUS;
 
 display_statement: DISPLAY':' expression AND? NEWLINE?;
+
+symbol:
+	LPAREN
+	RPAREN
+	COMMA
+	COLON
+    AND
+    ASSIGN
+    DIV
+    PLUS
+    MOD
+    MULT
+    MINUS
+    NEQ
+    NOT
+    OR
+    GT
+    LT
+    DOUBLEQ
+    SINGLEQ
+    DOLLAR
+	;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
