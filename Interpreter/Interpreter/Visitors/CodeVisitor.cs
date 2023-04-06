@@ -331,17 +331,17 @@ namespace Interpreter.Visitors
             switch (op)
             {
                 case "<":
-                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
+                    return (dynamic)left < (dynamic)right? "True": "False";
                 case "<=":
-                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left <= (dynamic)right ? "True" : "False";
                 case ">":
-                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left > (dynamic)right ? "True" : "False";
                 case ">=":
-                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left >= (dynamic)right ? "True" : "False"; ;
                 case "==":
-                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left == (dynamic)right ? "True" : "False";
                 case "<>":
-                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left != (dynamic)right ? "True" : "False";
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
             }
@@ -349,8 +349,8 @@ namespace Interpreter.Visitors
 
         public override object VisitBooleanExpression([NotNull] CodeGrammarParser.BooleanExpressionContext context)
         {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
+            var left = Convert.ToBoolean(Visit(context.expression(0)));
+            var right = Convert.ToBoolean(Visit(context.expression(1)));
             var op = context.boolOp().GetText();
 
             switch (op)

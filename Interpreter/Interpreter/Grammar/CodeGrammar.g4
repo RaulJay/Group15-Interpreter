@@ -14,7 +14,7 @@ ENDIF: 'END IF';
 DISPLAY: 'DISPLAY';
 
 // Operators
-AND: '&';
+AND: 'AND';
 ASSIGN: '=';
 DIV: '/';
 PLUS: '+';
@@ -22,8 +22,8 @@ MOD: '%';
 MULT: '*';
 MINUS: '-';
 NEQ: '<>';
-NOT: '!';
-OR: '|';
+NOT: 'NOT';
+OR: 'OR';
 GT: '>';
 GTE: '>=';
 LT: '<';
