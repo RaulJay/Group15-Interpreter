@@ -60,7 +60,7 @@ COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
+code: NEWLINE? BEGIN NEWLINE? statement* NEWLINE? END NEWLINE?;
 
 statement
         : declaration_statement

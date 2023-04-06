@@ -11,39 +11,17 @@ using System.Linq.Expressions;
 
 namespace Interpreter.Visitors
 {
-    internal class CodeVisitor : CodeGrammarBaseVisitor<object>
+    public  class CodeVisitor : CodeGrammarBaseVisitor<object>
     {
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
-        private SemanticErrorHandler semanticErrorHandler = new SemanticErrorHandler();
-
-
-        public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
-        {
-            if (context.declaration_statement() != null)
-            {
-                return VisitDeclaration_statement(context.declaration_statement());
-            }
-            else if (context.assignment_statement() != null)
-            {
-                return VisitAssignment_statement(context.assignment_statement());
-            }
-            else if (context.display_statement() != null)
-            {
-                return VisitDisplay_statement(context.display_statement());
-            }
-            else
-            {
-                return new object();
-            }
-        }
 
         public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
         {
             var identifier = context.IDENTIFIER().GetText();
             if (Variables.ContainsKey(identifier))
             {
-                return Variables[identifier].Value;
+                return Variables[identifier].Value!;
             }
             else
             {
@@ -56,7 +34,7 @@ namespace Interpreter.Visitors
             String varName;
             // Extract variable data type
             var type = Visit(context.data_type()) as Type;
-            var typeName = TypeName(type.Name);
+
             var varNames = context.declaration().IDENTIFIER();
 
             var declaration = context.declaration().GetText().Split(',');
@@ -75,11 +53,21 @@ namespace Interpreter.Visitors
                     if (flagExp < exp.Count())
                     {
                         varName = varNames[i].GetText();
+
+                        var literalValue = Visit(exp[flagExp]);
+
+                        var valueType = literalValue.GetType();
+
+                        if (valueType != type)
+                        {
+                            SemanticErrorHandler.TypeError(type, literalValue, context.data_type().GetText(), context.GetText());
+                        }
+
                         Variable val = new Variable()
                         {
                             Name = varName,
                             Value = Visit(exp[flagExp]),
-                            DataType = typeName
+                            DataType = type
                         };
                         Variables[varName] = val;
                         flagExp++;
@@ -92,7 +80,7 @@ namespace Interpreter.Visitors
                     {
                         Name = varName,
                         Value = null,
-                        DataType = typeName
+                        DataType = type
                     };
                     Variables[varName] = val;
                 }
@@ -185,9 +173,7 @@ namespace Interpreter.Visitors
             else if (context.literal().STRINGS() is { } s)
             {
                 String text =  s.GetText();
-                // Remove the enclosing quotes from the string
                 text = text.Substring(1, text.Length - 2);
-                // Replace escape sequences with their corresponding characters
                 text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
                 return text;
             }
