@@ -1,5 +1,5 @@
 ﻿BEGIN CODE
-    INT  x
+    CHAR  x
     SCAN: x
     DISPLAY: x
 END CODE

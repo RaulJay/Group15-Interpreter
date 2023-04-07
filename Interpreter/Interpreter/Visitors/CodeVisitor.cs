@@ -144,36 +144,45 @@ namespace Interpreter.Visitors
         }
 
 
-        public static Type TypeParser(string input)
+        public static (Type,object) TypeParser(string input)
         {
 
             if (int.TryParse(input, out int intValue))
             {
-                return typeof(int);
+                return (typeof(int), intValue);
             }
             else if (float.TryParse(input, out float floatValue))
             {
-                return typeof(float);
+                return (typeof(float), floatValue);
             }
             else if (char.TryParse(input, out char charValue))
             {
-                return typeof(char);
+                return (typeof(char), charValue);
             }
             else if (Regex.IsMatch(input, @"^[A-Za-z]+$"))
             {
-
-                return typeof(String);
+                if (input == "TRUE")
+                {
+                    return (typeof(bool), bool.Parse("true"));
+                }
+                else if (input == "FALSE")
+                {
+                    return (typeof(bool), bool.Parse("false"));
+                }
+                else
+                {
+                    return (typeof(String), input);
+                }
             }
             else
             {
-                return typeof(String);
+                return (typeof(String), input);
             }
         }
 
         public override object VisitScan_statement([NotNull] CodeGrammarParser.Scan_statementContext context)
         {
             int flagvarNames = 0;
-
             var varNames = context.IDENTIFIER();
 
             String[] inputs = Console.ReadLine()!.Split(',');
@@ -184,10 +193,12 @@ namespace Interpreter.Visitors
 
             if (equalLength == false)
             {
+                Console.WriteLine("Test1");
                 Environment.Exit(400);
             }
             else if (allExist == false)
             {
+                Console.WriteLine("Test2");
                 Environment.Exit(400);
             }
             else if(allNull == false)
@@ -198,12 +209,14 @@ namespace Interpreter.Visitors
             foreach(var input in inputs)
             {
 
-                Type inputType = TypeParser(input);
+                Type inputType = TypeParser(input).Item1;
+                var value = TypeParser(input).Item2;
 
                 if (inputType == Variables[varNames[flagvarNames].GetText()].DataType)
-                {
-                    Variables[varNames[flagvarNames].GetText()].Value = input;
-                } else
+                { 
+                    Variables[varNames[flagvarNames].GetText()].Value = value;
+                }
+                else
                 {
                     Environment.Exit(400);
                 }
