@@ -50,5 +50,15 @@ namespace Interpreter.ErrorHandling
             Console.Error.WriteLine($"Literal Value {value} is not recognized as type of {dataType}");
             Environment.Exit(400);
         }
+
+        public static void ScanErrorNotExist(Type type, object value, string text)
+        {
+            int location = CodeLine(text);
+        }
+
+        public static void ScanErrorNotNull(object value, string text)
+        {
+            int location = CodeLine(text);
+        }
     }
 }

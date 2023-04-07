@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime.Misc;
+using Antlr4.Runtime;
 using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
 using Microsoft.Win32.SafeHandles;
@@ -10,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Interpreter.Visitors
 {
@@ -138,6 +141,56 @@ namespace Interpreter.Visitors
             value = value.GetType() == typeof(bool) ? value.ToString()!.ToUpper() : value;
 
             Console.Write(value);
+            return new object();
+        }
+
+        public override object VisitScan_statement([NotNull] CodeGrammarParser.Scan_statementContext context)
+        {
+            int flagvarNames = 0;
+
+            var varNames = context.IDENTIFIER();
+
+            String[] inputs = Console.ReadLine()!.Split(',');
+
+            bool equalLength = (varNames.Length == inputs.Length);
+            bool allExist = varNames.All(name => Variables.ContainsKey(name.GetText()));
+            bool allNull = varNames.All(v => Variables[v.GetText()].Value == null);
+
+            if (equalLength == false)
+            {
+                Environment.Exit(400);
+            }
+            else if (allExist == false)
+            {
+                Environment.Exit(400);
+            }
+            else if(allNull == false)
+            {
+                Environment.Exit(400);
+            }
+
+            foreach(var input in inputs)
+            {
+
+                AntlrInputStream inputStream = new AntlrInputStream(input);
+                CodeGrammarLexer lexer = new CodeGrammarLexer(inputStream);
+                CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+                CodeGrammarParser parser = new CodeGrammarParser(tokenStream);
+                CodeGrammarParser.ExpressionContext expressionContext = parser.expression();
+                var value = Visit(expressionContext);
+
+
+                if (value.GetType() == Variables[varNames[flagvarNames].GetText()].DataType)
+                {
+                    Variables[varNames[flagvarNames].GetText()].Value = value;
+                } else
+                {
+                    Environment.Exit(400);
+                }
+
+                flagvarNames++;
+            }
+
             return new object();
         }
 

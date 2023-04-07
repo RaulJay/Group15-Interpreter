@@ -4,7 +4,6 @@ using Interpreter.Grammar;
 using Interpreter.ErrorHandling;
 
 var file = "..\\..\\..\\Grammar\\test.code";
-
 var fileContents = File.ReadAllText(file);
 
 var inputStream = new AntlrInputStream(fileContents);

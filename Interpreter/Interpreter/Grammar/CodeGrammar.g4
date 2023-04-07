@@ -12,6 +12,7 @@ ENDIF: 'END IF';
 
 // Input Output Statements
 DISPLAY: 'DISPLAY';
+SCAN: 'SCAN';
 
 // Operators
 AND: 'AND';
@@ -68,6 +69,7 @@ statement
         : declaration_statement
         | assignment_statement
         | display_statement
+        | scan_statement
         | if_block
         | COMMENT
         ;
@@ -80,6 +82,7 @@ declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENT
 declaration_statement: data_type declaration NEWLINE?;
 
 assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
+scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)*;
 
 
 expression
