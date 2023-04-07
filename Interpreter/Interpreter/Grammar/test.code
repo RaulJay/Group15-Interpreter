@@ -1,5 +1,5 @@
 ﻿BEGIN CODE
-    CHAR  x
-    SCAN: x
-    DISPLAY: x
+    BOOL x, y
+    SCAN: x, y
+    DISPLAY: x AND y
 END CODE
