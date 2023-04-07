@@ -60,7 +60,6 @@ namespace Interpreter.Visitors
                         varName = varNames[i].GetText();
 
                         var literalValue = Visit(exp[flagExp]);
-
                         var valueType = literalValue.GetType();
 
                         if (valueType != type)
@@ -144,6 +143,33 @@ namespace Interpreter.Visitors
             return new object();
         }
 
+
+        public static Type TypeParser(string input)
+        {
+
+            if (int.TryParse(input, out int intValue))
+            {
+                return typeof(int);
+            }
+            else if (float.TryParse(input, out float floatValue))
+            {
+                return typeof(float);
+            }
+            else if (char.TryParse(input, out char charValue))
+            {
+                return typeof(char);
+            }
+            else if (Regex.IsMatch(input, @"^[A-Za-z]+$"))
+            {
+
+                return typeof(String);
+            }
+            else
+            {
+                return typeof(String);
+            }
+        }
+
         public override object VisitScan_statement([NotNull] CodeGrammarParser.Scan_statementContext context)
         {
             int flagvarNames = 0;
@@ -172,17 +198,11 @@ namespace Interpreter.Visitors
             foreach(var input in inputs)
             {
 
-                AntlrInputStream inputStream = new AntlrInputStream(input);
-                CodeGrammarLexer lexer = new CodeGrammarLexer(inputStream);
-                CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-                CodeGrammarParser parser = new CodeGrammarParser(tokenStream);
-                CodeGrammarParser.ExpressionContext expressionContext = parser.expression();
-                var value = Visit(expressionContext);
+                Type inputType = TypeParser(input);
 
-
-                if (value.GetType() == Variables[varNames[flagvarNames].GetText()].DataType)
+                if (inputType == Variables[varNames[flagvarNames].GetText()].DataType)
                 {
-                    Variables[varNames[flagvarNames].GetText()].Value = value;
+                    Variables[varNames[flagvarNames].GetText()].Value = input;
                 } else
                 {
                     Environment.Exit(400);

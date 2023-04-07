@@ -81,8 +81,8 @@ data_type: INT | CHAR | BOOL | FLOAT | STRING;
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
 declaration_statement: data_type declaration NEWLINE?;
 
-assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
-scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)*;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE?;
+scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
 
 
 expression
