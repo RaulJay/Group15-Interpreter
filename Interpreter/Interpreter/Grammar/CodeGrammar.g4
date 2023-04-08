@@ -78,8 +78,9 @@ statement
 data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
-declaration_statement: data_type declaration NEWLINE?;
 
+declaration_statement: data_type declaration NEWLINE?;
+display_statement: DISPLAY':' expression NEWLINE?;
 assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE?;
 scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
 
@@ -87,9 +88,10 @@ scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
 expression
     : literal                               # literalExpression
     | DOLLAR                                # newlineExpression
+    | END                                   # endExpression
     | IDENTIFIER                            # identifierExpression
     | expression AMPERSAND expression       # concatExpression
-    | LBRACK symbol RBRACK                  # specialCharExpression
+    | SYMBOL                                # specialCharExpression
     | unary_operator expression             # unaryExpression
     | RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
@@ -121,28 +123,7 @@ CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
 unary_operator: PLUS | MINUS;
-
-display_statement: DISPLAY':' expression NEWLINE?;
-
-symbol:
-	LPAREN
-	| RPAREN
-	| COMMA
-	| COLON
-    | AMPERSAND
-    | ASSIGN
-    | DIV
-    | PLUS
-    | MOD
-    | MULT
-    | MINUS
-    | GT
-    | LT
-    | DOUBLEQ
-    | SINGLEQ
-    | DOLLAR
-    | HASH
-	;
+SYMBOL: '[' . ']';
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 

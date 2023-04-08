@@ -241,12 +241,8 @@ namespace Interpreter.Visitors
         public override object VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
 
-            Console.WriteLine(context.expression(1).GetText());
-
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
-
-            Console.WriteLine(right);
 
             left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
             right = right.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
@@ -261,15 +257,20 @@ namespace Interpreter.Visitors
 
         public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
         {
-            var exp = Visit(context.symbol());
-
-
-            return $"{exp}";
+            return context.SYMBOL().GetText()[1];
         }
 
-        public override object VisitSymbol([NotNull] CodeGrammarParser.SymbolContext context)
+        public object? SpecialChar(object? specialChar)
         {
-            return context.GetText();
+            if (specialChar != null)
+            {
+                specialChar = Convert.ToChar(specialChar);
+                return $"{specialChar}";
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid escape sequence: {specialChar}");
+            }
         }
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
