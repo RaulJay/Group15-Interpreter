@@ -240,6 +240,7 @@ namespace Interpreter.Visitors
 
         public override object VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
+
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
 
@@ -251,18 +252,25 @@ namespace Interpreter.Visitors
 
         public override object VisitNewlineExpression([NotNull] CodeGrammarParser.NewlineExpressionContext context)
         {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-
-            return $"{left}\n{right}";
+            return "\n";
         }
 
         public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
         {
-            var exp = context.symbol().GetText();
+            return context.SYMBOL().GetText()[1];
+        }
 
-
-            return $"{exp}";
+        public object? SpecialChar(object? specialChar)
+        {
+            if (specialChar != null)
+            {
+                specialChar = Convert.ToChar(specialChar);
+                return $"{specialChar}";
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid escape sequence: {specialChar}");
+            }
         }
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
