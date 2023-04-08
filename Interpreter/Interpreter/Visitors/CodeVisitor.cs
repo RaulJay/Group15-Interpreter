@@ -2,47 +2,28 @@
 using Interpreter.ArithmeticOperations;
 using Interpreter.Grammar;
 using Microsoft.Win32.SafeHandles;
+using Interpreter.ErrorHandling;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using System.Linq.Expressions;
 
 namespace Interpreter.Visitors
 {
-    internal class CodeVisitor : CodeGrammarBaseVisitor<object>
+    public  class CodeVisitor : CodeGrammarBaseVisitor<object>
     {
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
-
-
-        public override object VisitStatement([NotNull] CodeGrammarParser.StatementContext context)
-        {
-            if (context.declaration_statement() != null)
-            {
-                return VisitDeclaration_statement(context.declaration_statement());
-            }
-            else if (context.assignment_statement() != null)
-            {
-                return VisitAssignment_statement(context.assignment_statement());
-            }
-            else if (context.display_statement() != null)
-            {
-                return VisitDisplay_statement(context.display_statement());
-            }
-            else
-            {
-                return new object();
-            }
-        }
 
         public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
         {
             var identifier = context.IDENTIFIER().GetText();
             if (Variables.ContainsKey(identifier))
             {
-                return Variables[identifier].Value;
+                return Variables[identifier].Value!;
             }
             else
             {
@@ -55,7 +36,7 @@ namespace Interpreter.Visitors
             String varName;
             // Extract variable data type
             var type = Visit(context.data_type()) as Type;
-            var typeName = TypeName(type.Name);
+
             var varNames = context.declaration().IDENTIFIER();
 
             var declaration = context.declaration().GetText().Split(',');
@@ -74,11 +55,22 @@ namespace Interpreter.Visitors
                     if (flagExp < exp.Count())
                     {
                         varName = varNames[i].GetText();
+
+                        var literalValue = Visit(exp[flagExp]);
+
+                        var valueType = literalValue.GetType();
+
+                        if (valueType != type)
+                        {
+                            SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
+                        }
+
                         Variable val = new Variable()
                         {
+                            Type = context.data_type().GetText(),
                             Name = varName,
                             Value = Visit(exp[flagExp]),
-                            DataType = typeName
+                            DataType = type
                         };
                         Variables[varName] = val;
                         flagExp++;
@@ -89,9 +81,10 @@ namespace Interpreter.Visitors
                     varName = varNames[i].GetText();
                     Variable val = new Variable()
                     {
+                        Type = context.data_type().GetText(),
                         Name = varName,
                         Value = null,
-                        DataType = typeName
+                        DataType = type
                     };
                     Variables[varName] = val;
                 }
@@ -106,38 +99,15 @@ namespace Interpreter.Visitors
             foreach (var i in identifier)
             {
                 var expression = context.expression().Accept(this);
+
+                if (Variables[i.GetText()].DataType != expression.GetType())
+                {
+                    SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
+                }
                 Variables[i.GetText()].Value = expression;
             }
 
-            return null;
-        }
-
-        public static String TypeName(String typeName)
-        {
-            String typeDisplayName;
-            switch (typeName)
-            {
-                case "Int32":
-                    typeDisplayName = "int";
-                    break;
-                case "Single":
-                    typeDisplayName = "float";
-                    break;
-                case "Boolean":
-                    typeDisplayName = "bool";
-                    break;
-                case "Char":
-                    typeDisplayName = "char";
-                    break;
-                case "String":
-                    typeDisplayName = "string";
-                    break;
-                default:
-                    typeDisplayName = typeName;
-                    break;
-            }
-
-            return typeDisplayName;
+            return new object();
         }
 
         public override object VisitData_type([NotNull] CodeGrammarParser.Data_typeContext context)
@@ -165,15 +135,19 @@ namespace Interpreter.Visitors
 
             var value = Visit(context.expression());
 
-            Console.Write(value);
+            value = value.GetType() == typeof(bool) ? value.ToString()!.ToUpper() : value;
 
-            return null;
+            Console.Write(value);
+            return new object();
         }
 
-        public override object? VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
+        public override object VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
+
+            left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
+            right = left.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
 
             return $"{left}{right}";
         }
@@ -206,11 +180,18 @@ namespace Interpreter.Visitors
             }
             else if (context.literal().STRINGS() is { } s)
             {
-                String text = s.GetText();
-                // Remove the enclosing quotes from the string
+                String text =  s.GetText();
                 text = text.Substring(1, text.Length - 2);
-                // Replace escape sequences with their corresponding characters
                 text = Regex.Replace(text, "^\"|\"$|\\\\(.)", "$1");
+
+                if (text == "TRUE")
+                {
+                    return bool.Parse("true");
+                } 
+                else if (text == "FALSE")
+                {
+                    return bool.Parse("false");
+                }
                 return text;
             }
             else if (context.literal().CHARA() is { } c)
@@ -219,10 +200,6 @@ namespace Interpreter.Visitors
                 text = Regex.Replace(text, "^\'|\'$|\\\\(.)", "$1");
                 char charaValue = text[0];
                 return text;
-            }
-            else if (context.literal().BOOLEAN() is { } t)
-            {
-                return bool.Parse(t.GetText());
             }
             else
             {
