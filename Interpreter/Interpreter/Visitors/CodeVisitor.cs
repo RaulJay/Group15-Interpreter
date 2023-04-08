@@ -185,25 +185,36 @@ namespace Interpreter.Visitors
             int flagvarNames = 0;
             var varNames = context.IDENTIFIER();
 
-            String[] inputs = Console.ReadLine()!.Split(',');
 
-            bool equalLength = (varNames.Length == inputs.Length);
             bool allExist = varNames.All(name => Variables.ContainsKey(name.GetText()));
-            bool allNull = varNames.All(v => Variables[v.GetText()].Value == null);
+            if (allExist == false)
+            {
+                foreach (var name in varNames)
+                {
+                    if (!Variables.ContainsKey(name.GetText()))
+                    {
+                        SemanticErrorHandler.ScanErrorNotExist(context.GetText(), name.GetText());
+                    }
+                }
+            }
 
+            bool allNull = varNames.All(v => Variables[v.GetText()].Value == null);
+            if (allNull == false)
+            {
+                foreach (var name in varNames)
+                {
+                    if (Variables[name.GetText()].Value != null)
+                    {
+                        SemanticErrorHandler.ScanErrorNotNull(context.GetText(), name.GetText());
+                    }
+                }
+            }
+
+            String[] inputs = Console.ReadLine()!.Split(',');
+            bool equalLength = (varNames.Length == inputs.Length);
             if (equalLength == false)
             {
-                Console.WriteLine("Test1");
-                Environment.Exit(400);
-            }
-            else if (allExist == false)
-            {
-                Console.WriteLine("Test2");
-                Environment.Exit(400);
-            }
-            else if(allNull == false)
-            {
-                Environment.Exit(400);
+                SemanticErrorHandler.ScanErrorNotEqualLength(context.GetText(), inputs.Length, varNames.Length);
             }
 
             foreach(var input in inputs)
@@ -233,7 +244,7 @@ namespace Interpreter.Visitors
             var right = Visit(context.expression(1));
 
             left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
-            right = left.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
+            right = right.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
 
             return $"{left}{right}";
         }
@@ -285,7 +296,7 @@ namespace Interpreter.Visitors
                 string text = c.GetText();
                 text = Regex.Replace(text, "^\'|\'$|\\\\(.)", "$1");
                 char charaValue = text[0];
-                return text;
+                return charaValue;
             }
             else
             {
