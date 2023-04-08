@@ -1,5 +1,5 @@
 ﻿BEGIN CODE
-    BOOL x, y
-    SCAN: x, y
-    DISPLAY: x AND y
+    INT x = 3
+    DISPLAY: x & $
+    DISPLAY: x
 END CODE

@@ -35,6 +35,7 @@ DOUBLEQ: '\"';
 SINGLEQ: '\'';
 DOLLAR: '$';
 AMPERSAND: '&';
+HASH: '#';
 
 // Special Characters
 COMMA: ',';
@@ -57,7 +58,7 @@ IF: 'IF';
 FALSE: 'FALSE';
 TRUE: 'TRUE';
 
-// Token Skips
+// Token Skips and Whitespaces
 WHITESPACE: [\t\r\n]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
@@ -74,8 +75,6 @@ statement
         | COMMENT
         ;
 
-//variable_declaration: data_type identifier (ASSIGN expression)?;
-
 data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
@@ -87,10 +86,10 @@ scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
 
 expression
     : literal                               # literalExpression
+    | DOLLAR                                # newlineExpression
     | IDENTIFIER                            # identifierExpression
-    | LBRACK symbol RBRACK                  # specialCharExpression
     | expression AMPERSAND expression       # concatExpression
-    | expression DOLLAR expression          # newlineExpression
+    | LBRACK symbol RBRACK                  # specialCharExpression
     | unary_operator expression             # unaryExpression
     | RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
@@ -123,28 +122,26 @@ BOOLEAN: TRUE | FALSE;
 
 unary_operator: PLUS | MINUS;
 
-display_statement: DISPLAY':' expression AND? NEWLINE?;
+display_statement: DISPLAY':' expression NEWLINE?;
 
 symbol:
 	LPAREN
-	RPAREN
-	COMMA
-	COLON
-    AND
-    ASSIGN
-    DIV
-    PLUS
-    MOD
-    MULT
-    MINUS
-    NEQ
-    NOT
-    OR
-    GT
-    LT
-    DOUBLEQ
-    SINGLEQ
-    DOLLAR
+	| RPAREN
+	| COMMA
+	| COLON
+    | AMPERSAND
+    | ASSIGN
+    | DIV
+    | PLUS
+    | MOD
+    | MULT
+    | MINUS
+    | GT
+    | LT
+    | DOUBLEQ
+    | SINGLEQ
+    | DOLLAR
+    | HASH
 	;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;

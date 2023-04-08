@@ -240,8 +240,13 @@ namespace Interpreter.Visitors
 
         public override object VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
+
+            Console.WriteLine(context.expression(1).GetText());
+
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
+
+            Console.WriteLine(right);
 
             left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
             right = right.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
@@ -251,18 +256,20 @@ namespace Interpreter.Visitors
 
         public override object VisitNewlineExpression([NotNull] CodeGrammarParser.NewlineExpressionContext context)
         {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
-
-            return $"{left}\n{right}";
+            return "\n";
         }
 
         public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
         {
-            var exp = context.symbol().GetText();
+            var exp = Visit(context.symbol());
 
 
             return $"{exp}";
+        }
+
+        public override object VisitSymbol([NotNull] CodeGrammarParser.SymbolContext context)
+        {
+            return context.GetText();
         }
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
