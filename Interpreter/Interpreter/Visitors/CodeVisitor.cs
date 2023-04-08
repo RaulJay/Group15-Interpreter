@@ -339,33 +339,6 @@ namespace Interpreter.Visitors
             }
         }
 
-        public override object VisitIf_statement([NotNull] CodeGrammarParser.If_statementContext context)
-        {
-            var condition = (bool)Visit(context.expression());
-            if (condition)
-            {
-                return Visit(context.if_block());
-            }
-            else if (context.ifelse_block() != null)
-            {
-                return Visit(context.ifelse_block());
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public override object VisitIf_block([NotNull] CodeGrammarParser.If_blockContext context)
-        {
-            return VisitChildren(context);
-        }
-
-        public override object VisitIfelse_block([NotNull] CodeGrammarParser.Ifelse_blockContext context)
-        {
-            return VisitChildren(context);
-        }
-
         public override object VisitBooleanExpression([NotNull] CodeGrammarParser.BooleanExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -383,6 +356,32 @@ namespace Interpreter.Visitors
                 default:
                     throw new NotSupportedException($"Boolean operator {context.boolOp().GetText()} is not supported.");
             }
+        }
+
+        public override object VisitIf_statement([NotNull] CodeGrammarParser.If_statementContext context)
+        {
+            CodeGrammarParser.Condition_blockContext[] conditions = context.condition_block();
+
+            bool evaluatedBlock = false;
+
+            foreach(CodeGrammarParser.Condition_blockContext condition in conditions)
+            {
+                bool evaluated = (bool)Visit(condition.expression());
+
+                if (evaluated)
+                {
+                    evaluatedBlock = true;
+                    Visit(condition.if_block());
+                    break;
+                }
+            }
+
+            if (!evaluatedBlock && context.if_block() != null)
+            {
+                Visit(context.if_block());
+            }
+
+            return null;
         }
     }
 }

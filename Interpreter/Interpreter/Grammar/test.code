@@ -2,4 +2,8 @@
     STRING f = "Hello World"
     INT x = 1 , y = 2 , z = 3
     DISPLAY "Hellooww" & z $ y & x $ "Success"
+    IF (x < y)
+    BEGIN IF
+        DISPLAY x + y
+    END IF
 END CODE
