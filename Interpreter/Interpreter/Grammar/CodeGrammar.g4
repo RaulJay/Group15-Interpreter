@@ -67,7 +67,7 @@ statement
         : declaration_statement
         | assignment_statement
         | display_statement
-        | if_block
+        | if_statement
         | COMMENT
         ;
 

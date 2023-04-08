@@ -30,6 +30,10 @@ namespace Interpreter.Visitors
             {
                 return VisitDisplay_statement(context.display_statement());
             }
+            else if (context.if_statement() != null)
+            {
+                return VisitIf_statement(context.if_statement());
+            }
             else
             {
                 return new object();
@@ -366,9 +370,9 @@ namespace Interpreter.Visitors
 
             foreach(CodeGrammarParser.Condition_blockContext condition in conditions)
             {
-                bool evaluated = (bool)Visit(condition.expression());
+                var evaluated = Visit(condition.expression());
 
-                if (evaluated)
+                if ((string)evaluated == "TRUE")
                 {
                     evaluatedBlock = true;
                     Visit(condition.if_block());

@@ -1,9 +1,15 @@
 ﻿BEGIN CODE
     STRING f = "Hello World"
     INT x = 1 , y = 2 , z = 3
-    DISPLAY "Hellooww" & z $ y & x $ "Success"
-    IF (x < y)
+    IF (x > y)
     BEGIN IF
-        DISPLAY x + y
+        DISPLAY "wario"
+    END IF
+    ELSE IF (x < y)
+    BEGIN IF
+        IF ((x + y) == z)
+        BEGIN IF
+            DISPLAY f
+        END IF
     END IF
 END CODE
