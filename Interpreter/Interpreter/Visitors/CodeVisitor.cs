@@ -232,9 +232,9 @@ namespace Interpreter.Visitors
                     switch (value)
                     {
                         case int intValue:
-                            return ++intValue;
+                            return intValue + 1;
                         case float floatValue:
-                            return ++floatValue;
+                            return floatValue + 1;
                         default:
                             throw new ArgumentException("Unary increment is not supported for this value type.");
                     }
@@ -242,9 +242,9 @@ namespace Interpreter.Visitors
                     switch (value)
                     {
                         case int intValue:
-                            return --intValue;
+                            return intValue - 1;
                         case float floatValue:
-                            return --floatValue;
+                            return floatValue -1;
                         default:
                             throw new ArgumentException("Unary decrement is not supported for this value type.");
                     }

@@ -16,7 +16,9 @@ DISPLAY: 'DISPLAY';
 // Operators
 AND: 'AND';
 ASSIGN: '=';
+DECREMENT: '--';
 DIV: '/';
+INCREMENT: '++';
 PLUS: '+';
 MOD: '%';
 MULT: '*';
@@ -118,7 +120,7 @@ STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-unary_operator: PLUS | MINUS;
+unary_operator: PLUS | MINUS | INCREMENT | DECREMENT;
 
 display_statement: DISPLAY':' expression AND? NEWLINE?;
 

@@ -1,6 +1,4 @@
 ﻿BEGIN CODE
-    BOOL x = "TRUE"
-    BOOL y = "TRUE"
-    BOOL z = x AND y
-    DISPLAY: z
+    INT x = 3
+    DISPLAY: ++x
 END CODE
