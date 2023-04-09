@@ -41,6 +41,7 @@ namespace Interpreter.Visitors
             return new object();
         }
 
+
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
             String varName;
@@ -57,8 +58,7 @@ namespace Interpreter.Visitors
             {
                 if (Variables.ContainsKey(varNames[i].GetText()))
                 {
-                    Console.WriteLine(varNames[i].GetText() + "is already declared");
-                    continue;
+                    SemanticErrorHandler.VariableAlreadyDeclared(varNames[i].GetText(), context.GetText());
                 }
                 if (declaration[i].Contains('='))
                 {

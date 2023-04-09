@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Antlr4.Runtime.Atn;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Interpreter.ErrorHandling
 {
@@ -33,6 +35,15 @@ namespace Interpreter.ErrorHandling
             }
 
             return 0;
+        }
+
+        public static void VariableAlreadyDeclared(string variableName, string text)
+        {
+            int location = CodeLine(text);
+
+            Console.Error.WriteLine($"Semantic Error: Declaration Statement at line {location}");
+            Console.Error.WriteLine($"Variable {variableName} is already declared");
+            Environment.Exit(400);
         }
         public static void TypeErrorDeclaration(Type type, object value, string dataType, string text)
         {
