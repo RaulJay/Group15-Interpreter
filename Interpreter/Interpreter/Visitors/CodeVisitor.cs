@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
 using Antlr4.Runtime;
-using Interpreter.ArithmeticOperations;
+using Interpreter.HelperFiles;
 using Interpreter.Grammar;
 using Microsoft.Win32.SafeHandles;
 using Interpreter.ErrorHandling;
@@ -20,7 +20,12 @@ namespace Interpreter.Visitors
     {
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
-        
+
+        /// <summary>
+        /// Identifier expression Visitor
+        /// </summary>
+        /// <param name="context">Identifier Expression</param>
+        /// <returns>Value stored in Variable</returns>
         public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
         {
             var identifier = context.IDENTIFIER().GetText();
@@ -30,10 +35,25 @@ namespace Interpreter.Visitors
             }
             else
             {
-                throw new Exception($"Variable {identifier} is not declared");
+                SemanticErrorHandler.VariableNotDeclared(context.IDENTIFIER().GetText());
             }
+
+            return new object();
         }
 
+        /// <summary>
+        /// Visitor for Declaration Statement.
+        /// Store Variable Name and value in a dictionary.
+        /// Declarations includes the following:
+        /// 1. Declaration of a variable without value.
+        /// 2. Declaration of a variable with value.
+        /// 3. Declaration of multiple vaaibles with or without value.
+        /// Error Handling:
+        /// 1. Variable already declared.
+        /// 2. Type Error.
+        /// </summary>
+        /// <param name="context">Declaration Statement</param>
+        /// <returns></returns>
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
             String varName;
@@ -48,11 +68,8 @@ namespace Interpreter.Visitors
 
             for (int i = 0; i < declaration.Length; i++)
             {
-                if (Variables.ContainsKey(varNames[i].GetText()))
-                {
-                    Console.WriteLine(varNames[i].GetText() + "is already declared");
-                    continue;
-                }
+                if (Variables.ContainsKey(varNames[i].GetText())) SemanticErrorHandler.VariableAlreadyDeclared(varNames[i].GetText(), context.GetText());
+                
                 if (declaration[i].Contains('='))
                 {
                     if (flagExp < exp.Count())
@@ -62,10 +79,7 @@ namespace Interpreter.Visitors
                         var literalValue = Visit(exp[flagExp]);
                         var valueType = literalValue.GetType();
 
-                        if (valueType != type)
-                        {
-                            SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
-                        }
+                        if (valueType != type) SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
 
                         Variable val = new Variable()
                         {
@@ -95,23 +109,19 @@ namespace Interpreter.Visitors
             return new object();
         }
 
-        public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
-        {
-            var identifier = context.IDENTIFIER();
-            foreach (var i in identifier)
-            {
-                var expression = context.expression().Accept(this);
-
-                if (Variables[i.GetText()].DataType != expression.GetType())
-                {
-                    SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
-                }
-                Variables[i.GetText()].Value = expression;
-            }
-
-            return new object();
-        }
-
+        /// <summary>
+        /// Visitor for Data Type.
+        /// Will return the type of Data based on the following:
+        /// 1. INT as int
+        /// 2. FLOAT as float
+        /// 3. BOOL as bool
+        /// 4. CHAR as char
+        /// 5. STRING as string
+        /// Error Handling:
+        /// 1. Data Type not found.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override object VisitData_type([NotNull] CodeGrammarParser.Data_typeContext context)
         {
             switch (context.GetText())
@@ -127,59 +137,66 @@ namespace Interpreter.Visitors
                 case "STRING":
                     return typeof(string);
                 default:
-                    throw new NotImplementedException();
+                    SemanticErrorHandler.DataTypeError(context.GetText());
+                    return new object();
             }
         }
 
+        /// <summary>
+        /// Visitor for Assignment Statement.
+        /// Store value in a variable.
+        /// Assignment Includes:
+        /// 1. Assign value to a Variable.
+        /// 2. Multiple Assignment.
+        /// Error Handling:
+        /// 1. Variable is not declared
+        /// 2. Variable type not the same as the value type.
+        /// </summary>
+        /// <param name="context">Assignment Statement</param>
+        /// <returns></returns>
+        public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
+        {
+            var identifier = context.IDENTIFIER();
+            foreach (var i in identifier)
+            {
+                var expression = context.expression().Accept(this);
+
+                if (Variables.ContainsKey(i.GetText()) == false) SemanticErrorHandler.VariableNotDeclared(i.GetText(), context.expression().GetText());
+                if (Variables[i.GetText()].DataType != expression.GetType()) SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
+
+                Variables[i.GetText()].Value = expression;
+            }
+
+            return new object();
+        }
+        /// <summary>
+        /// Visitor for Display Statement
+        /// Output the value of a variable.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override object VisitDisplay_statement([NotNull] CodeGrammarParser.Display_statementContext context)
         {
             var varName = context.expression().GetText();
 
             var value = Visit(context.expression());
 
-            value = value.GetType() == typeof(bool) ? value.ToString()!.ToUpper() : value;
+            if (value != null) value = value.GetType() == typeof(bool) ? value.ToString()!.ToUpper() : value;
 
             Console.Write(value);
             return new object();
         }
-
-
-        public static (Type,object) TypeParser(string input)
-        {
-
-            if (int.TryParse(input, out int intValue))
-            {
-                return (typeof(int), intValue);
-            }
-            else if (float.TryParse(input, out float floatValue))
-            {
-                return (typeof(float), floatValue);
-            }
-            else if (char.TryParse(input, out char charValue))
-            {
-                return (typeof(char), charValue);
-            }
-            else if (Regex.IsMatch(input, @"^[A-Za-z]+$"))
-            {
-                if (input == "TRUE")
-                {
-                    return (typeof(bool), bool.Parse("true"));
-                }
-                else if (input == "FALSE")
-                {
-                    return (typeof(bool), bool.Parse("false"));
-                }
-                else
-                {
-                    return (typeof(String), input);
-                }
-            }
-            else
-            {
-                return (typeof(String), input);
-            }
-        }
-
+        /// <summary>
+        /// Visit Scan Statement
+        /// Scan value from the user and store it in a variable.
+        /// Error Handling:
+        /// 1. Variable is not declared.
+        /// 2. Variable is already assigned a value.
+        /// 3. Type Error.
+        /// 4. Input is not a valid value.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override object VisitScan_statement([NotNull] CodeGrammarParser.Scan_statementContext context)
         {
             int flagvarNames = 0;
@@ -191,10 +208,7 @@ namespace Interpreter.Visitors
             {
                 foreach (var name in varNames)
                 {
-                    if (!Variables.ContainsKey(name.GetText()))
-                    {
-                        SemanticErrorHandler.ScanErrorNotExist(context.GetText(), name.GetText());
-                    }
+                    if (!Variables.ContainsKey(name.GetText())) SemanticErrorHandler.ScanErrorNotExist(context.GetText(), name.GetText());
                 }
             }
 
@@ -203,34 +217,26 @@ namespace Interpreter.Visitors
             {
                 foreach (var name in varNames)
                 {
-                    if (Variables[name.GetText()].Value != null)
-                    {
-                        SemanticErrorHandler.ScanErrorNotNull(context.GetText(), name.GetText());
-                    }
+                    if (Variables[name.GetText()].Value != null) SemanticErrorHandler.ScanErrorNotNull(context.GetText(), name.GetText());
                 }
             }
 
             String[] inputs = Console.ReadLine()!.Split(',');
+
             bool equalLength = (varNames.Length == inputs.Length);
-            if (equalLength == false)
-            {
-                SemanticErrorHandler.ScanErrorNotEqualLength(context.GetText(), inputs.Length, varNames.Length);
-            }
+            if (equalLength == false) SemanticErrorHandler.ScanErrorNotEqualLength(context.GetText(), inputs.Length, varNames.Length);
 
             foreach(var input in inputs)
             {
 
-                Type inputType = TypeParser(input).Item1;
-                var value = TypeParser(input).Item2;
+                Type inputType = HelperFunctions.TypeParser(input).Item1;
+                var value = HelperFunctions.TypeParser(input).Item2;
 
                 if (inputType == Variables[varNames[flagvarNames].GetText()].DataType)
                 { 
                     Variables[varNames[flagvarNames].GetText()].Value = value;
                 }
-                else
-                {
-                    Environment.Exit(400);
-                }
+                else SemanticErrorHandler.ScanErrorNotValid(context.GetText(), input, inputType, Variables[varNames[flagvarNames].GetText()].DataType!);
 
                 flagvarNames++;
             }
@@ -238,41 +244,57 @@ namespace Interpreter.Visitors
             return new object();
         }
 
+        /// <summary>
+        /// Visitor for Concatenated Display Statement.
+        /// </summary>
+        /// <param name="context">Concat Statement</param>
+        /// <returns>Values of the left and right expression.</returns>
         public override object VisitConcatExpression([NotNull] CodeGrammarParser.ConcatExpressionContext context)
         {
 
             var left = Visit(context.expression(0));
             var right = Visit(context.expression(1));
 
-            left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
-            right = right.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
+            if (left != null) left = left.GetType() == typeof(bool) ? left.ToString()!.ToUpper() : left;
+            if (right != null) right = right.GetType() == typeof(bool) ? right.ToString()!.ToUpper() : right;
 
             return $"{left}{right}";
         }
 
+        /// <summary>
+        /// Visitor for the Newline Expression in Display Statement
+        /// </summary>
+        /// <param name="context">Newline symbol ($)</param>
+        /// <returns>Escape Sequence that will force the cursor to change position to the beginning of the next line.</returns>
         public override object VisitNewlineExpression([NotNull] CodeGrammarParser.NewlineExpressionContext context)
         {
             return "\n";
         }
 
+        /// <summary>
+        /// Visitor for Special Charater Expression.
+        /// Uses two square brackets as the ecape code.
+        /// </summary>
+        /// <param name="context">Special Character enclosed in two square brackets</param>
+        /// <returns>Character between two square brackets</returns>
         public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
         {
             return context.SYMBOL().GetText()[1];
         }
 
-        public object? SpecialChar(object? specialChar)
-        {
-            if (specialChar != null)
-            {
-                specialChar = Convert.ToChar(specialChar);
-                return $"{specialChar}";
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid escape sequence: {specialChar}");
-            }
-        }
-
+        /// <summary>
+        /// Visitor for Literal Expression.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns>
+        /// Will return the following:
+        /// 1. If literal is an integer will return an integer.
+        /// 2. If literal is a float will return a float.
+        /// 3. If literal is a string will return a string.
+        /// 4. If literal is a boolean will return a boolean.
+        /// 5. If literal is a character will return a character.
+        /// If not, will return null.
+        /// </returns>
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
         {
             if (context.literal().INTEGER() is { } i)
@@ -312,52 +334,29 @@ namespace Interpreter.Visitors
             }
         }
 
+        /// <summary>
+        /// Visitor for Unary Expression.
+        /// Visits the UnaryOperation Function from the ArithmeticOperation class.
+        /// Error Handling:
+        /// 1. If the value is not an integer or a float, will throw an error.
+        /// </summary>
+        /// <param name="context">Unary Expression</param>
+        /// <returns>Result of the expression</returns>
         public override object VisitUnaryExpression([NotNull] CodeGrammarParser.UnaryExpressionContext context)
         {
-            return UnaryOperation(context.unary_operator().GetText(), Visit(context.expression()));
+            var value = Visit(context.expression());
+
+            if (value.GetType() != typeof(int) && value.GetType() != typeof(float)) SemanticErrorHandler.UnaryErrorValue(context.GetText(), value);
+
+            return ArithmeticOperation.UnaryOperation(context.unary_operator().GetText(), value);
         }
 
-        public static object UnaryOperation(string symbol, object value)
-        {
-            switch (symbol)
-            {
-                case "+":
-                    return value;
-                case "-":
-                    switch (value)
-                    {
-                        case int intValue:
-                            return -intValue;
-                        case float floatValue:
-                            return -floatValue;
-                        default:
-                            throw new ArgumentException("Unary negation is not supported for this value type.");
-                    }
-                case "++":
-                    switch (value)
-                    {
-                        case int intValue:
-                            return ++intValue;
-                        case float floatValue:
-                            return ++floatValue;
-                        default:
-                            throw new ArgumentException("Unary increment is not supported for this value type.");
-                    }
-                case "--":
-                    switch (value)
-                    {
-                        case int intValue:
-                            return --intValue;
-                        case float floatValue:
-                            return --floatValue;
-                        default:
-                            throw new ArgumentException("Unary decrement is not supported for this value type.");
-                    }
-                default:
-                    throw new ArgumentException($"Unary operator {symbol} is not supported.");
-            }
-        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override object VisitBracketExpression([NotNull] CodeGrammarParser.BracketExpressionContext context)
         {
             return Visit(context.expression());
@@ -413,17 +412,17 @@ namespace Interpreter.Visitors
             switch (op)
             {
                 case "<":
-                    return (dynamic)left < (dynamic)right? "True": "False";
+                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
                 case "<=":
-                    return (dynamic)left <= (dynamic)right ? "True" : "False";
+                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
                 case ">":
-                    return (dynamic)left > (dynamic)right ? "True" : "False";
+                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
                 case ">=":
-                    return (dynamic)left >= (dynamic)right ? "True" : "False"; ;
+                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE"; ;
                 case "==":
-                    return (dynamic)left == (dynamic)right ? "True" : "False";
+                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
                 case "<>":
-                    return (dynamic)left != (dynamic)right ? "True" : "False";
+                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
             }
@@ -471,7 +470,7 @@ namespace Interpreter.Visitors
                 Visit(context.if_block());
             }
 
-            return null;
+            return new object();
         }
     }
 }

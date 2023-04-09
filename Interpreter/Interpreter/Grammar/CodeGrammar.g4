@@ -91,7 +91,7 @@ expression
     | IDENTIFIER                            # identifierExpression
     | expression AMPERSAND expression       # concatExpression
     | SYMBOL                                # specialCharExpression
-    | unary_operator expression             # unaryExpression
+    | unary_operator expression            # unaryExpression
     | RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
     | expression exponentOp expression      # exponentExpression    
