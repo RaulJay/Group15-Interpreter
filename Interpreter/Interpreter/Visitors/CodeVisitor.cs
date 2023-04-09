@@ -20,7 +20,7 @@ namespace Interpreter.Visitors
     {
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
-
+        
         public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
         {
             var identifier = context.IDENTIFIER().GetText();
@@ -446,6 +446,32 @@ namespace Interpreter.Visitors
                 default:
                     throw new NotSupportedException($"Boolean operator {context.boolOp().GetText()} is not supported.");
             }
+        }
+
+        public override object VisitIf_statement([NotNull] CodeGrammarParser.If_statementContext context)
+        {
+            CodeGrammarParser.Condition_blockContext[] conditions = context.condition_block();
+
+            bool evaluatedBlock = false;
+
+            foreach(CodeGrammarParser.Condition_blockContext condition in conditions)
+            {
+                var evaluated = Visit(condition.expression());
+
+                if ((string)evaluated == "TRUE")
+                {
+                    evaluatedBlock = true;
+                    Visit(condition.if_block());
+                    break;
+                }
+            }
+
+            if (!evaluatedBlock && context.if_block() != null)
+            {
+                Visit(context.if_block());
+            }
+
+            return null;
         }
     }
 }
