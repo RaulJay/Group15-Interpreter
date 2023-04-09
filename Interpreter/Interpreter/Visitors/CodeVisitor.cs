@@ -329,17 +329,17 @@ namespace Interpreter.Visitors
             switch (op)
             {
                 case "<":
-                    return (dynamic)left < (dynamic)right? "True": "False";
+                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
                 case "<=":
-                    return (dynamic)left <= (dynamic)right ? "True" : "False";
+                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
                 case ">":
-                    return (dynamic)left > (dynamic)right ? "True" : "False";
+                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
                 case ">=":
-                    return (dynamic)left >= (dynamic)right ? "True" : "False"; ;
+                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE"; ;
                 case "==":
-                    return (dynamic)left == (dynamic)right ? "True" : "False";
+                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
                 case "<>":
-                    return (dynamic)left != (dynamic)right ? "True" : "False";
+                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
             }
