@@ -1,4 +1,5 @@
 ﻿BEGIN CODE
-    INT x
-    y = 3
+# Comment
+# This is a comment
+	DISPLAY: ++3
 END CODE
