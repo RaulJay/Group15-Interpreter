@@ -131,5 +131,13 @@ namespace Interpreter.ErrorHandling
             Console.Error.WriteLine($"Semantic Error: Variable {text} is not declared");
             Environment.Exit(400);
         }
+
+        public static void WhileInfiniteLoop(string text)
+        {
+            int location = CodeLine(text);
+            Console.Error.WriteLine($"Semantic Error: While Statement at line {location}");
+            Console.Error.WriteLine($"Possible infinite loop detected");
+            Environment.Exit(400);
+        }
     }
 }

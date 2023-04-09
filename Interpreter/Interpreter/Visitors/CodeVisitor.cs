@@ -353,20 +353,40 @@ namespace Interpreter.Visitors
 
 
         /// <summary>
-        /// 
+        /// Visitor for Bracket Expression
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">Bracket Expression</param>
+        /// <returns>Value inside the brackets</returns>
         public override object VisitBracketExpression([NotNull] CodeGrammarParser.BracketExpressionContext context)
         {
             return Visit(context.expression());
         }
-
+        
+        /// <summary>
+        /// Visitor for Parenthesis Expression
+        /// </summary>
+        /// <param name="context">Parenthesis Expression</param>
+        /// <returns>Value inside the parenthesis</returns>
         public override object VisitParenthesizeExpression([NotNull] CodeGrammarParser.ParenthesizeExpressionContext context)
         {
             return Visit(context.expression());
         }
 
+        /// <summary>
+        /// Visitor for Multiplication Expression.
+        /// MultOp Contains:
+        /// 1. Multiplication
+        /// 2. Division
+        /// 3. Modulo
+        /// 4. Exponentiation
+        /// </summary>
+        /// <param name="context">Multiplication Expression</param>
+        /// <returns>
+        /// Arithmetic Operation result of the following:
+        /// 1. Multiplication
+        /// 2. Division
+        /// 3. Modulo
+        /// </returns>
         public override object VisitMultiplicationExpression([NotNull] CodeGrammarParser.MultiplicationExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -385,6 +405,18 @@ namespace Interpreter.Visitors
             #pragma warning restore CS8603 // Possible null reference return.
         }
 
+        /// <summary>
+        /// Visitor for Addition Expression.
+        /// AddOp Contains:
+        /// 1. Addition
+        /// 2. Subtraction
+        /// </summary>
+        /// <param name="context">Addition Expression</param>
+        /// <returns>
+        /// Arithmetic Operation result of the following:
+        /// 1. Addition
+        /// 2. Subtraction
+        /// </returns>
         public override object VisitAdditionExpression([NotNull] CodeGrammarParser.AdditionExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -402,6 +434,26 @@ namespace Interpreter.Visitors
             #pragma warning restore CS8603 // Possible null reference return.
         }
 
+        /// <summary>
+        /// Visitor for Comparison Expression.
+        /// CompOp contains:
+        /// 1. Less than
+        /// 2. Less than or equal to
+        /// 3. Greater than
+        /// 4. Greater than or equal to
+        /// 5. Equal to
+        /// 6. Not equal to
+        /// </summary>
+        /// <param name="context">Comparison Expression</param>
+        /// <returns>
+        /// Boolean Output of the following Operation:
+        /// 1. Less than
+        /// 2. Less than or equal to
+        /// 3. Greater than
+        /// 4. Greater than or equal to
+        /// 5. Equal to
+        /// 6. Not equal to
+        /// </returns>
         public override object VisitComparisonExpression([NotNull] CodeGrammarParser.ComparisonExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -428,6 +480,18 @@ namespace Interpreter.Visitors
             }
         }
 
+        /// <summary>
+        /// Visitor for Boolean Expression.
+        /// BoolOp contains:
+        /// 1. AND
+        /// 2. OR
+        /// </summary>
+        /// <param name="context">Boolean Expression</param>
+        /// <returns>
+        /// Boolean Result of the following Operation:
+        /// 1. AND
+        /// 2. OR
+        /// </returns>
         public override object VisitBooleanExpression([NotNull] CodeGrammarParser.BooleanExpressionContext context)
         {
             var left = Convert.ToBoolean(Visit(context.expression(0)));
@@ -445,6 +509,15 @@ namespace Interpreter.Visitors
             }
         }
 
+        /// <summary>
+        /// Visitor for If Statement.
+        /// Contains the following conditional Statement:
+        /// 1. If
+        /// 2. If else
+        /// 3. If else if else
+        /// 4. Nested If
+        /// </summary>
+        /// <param name="context"> If Statement Expression</param>
         public override object VisitIf_statement([NotNull] CodeGrammarParser.If_statementContext context)
         {
             CodeGrammarParser.Condition_blockContext[] conditions = context.condition_block();
@@ -471,12 +544,24 @@ namespace Interpreter.Visitors
             return new object();
         }
 
+
+        /// <summary>
+        /// Visitor for NOT Boolean Expression.
+        /// </summary>
+        /// <param name="context">Not Boolean Expression</param>
+        /// <returns> Opposite of the boolean value</returns>
         public override object VisitNotBooleanExpression([NotNull] CodeGrammarParser.NotBooleanExpressionContext context)
         {
             var right = Convert.ToBoolean(Visit(context.expression()));
             return !(dynamic)right;
         }
 
+        /// <summary>
+        /// Visitor for While Statement.
+        /// Error Handling:
+        /// 1. Infinite Loop
+        /// </summary>
+        /// <param name="context">While Statement</param>
         public override object VisitWhile_statement([NotNull] CodeGrammarParser.While_statementContext context)
         {
             var value = Visit(context.expression());
@@ -488,14 +573,14 @@ namespace Interpreter.Visitors
                 currIterations++;
                 if(currIterations > maxIterations)
                 {
-                    throw new Exception("Possible infinite loop detected");
+                    SemanticErrorHandler.WhileInfiniteLoop(context.GetText());
                 }
                 Visit(context.while_block());
 
                 value = Visit(context.expression());
             }
 
-            return null;
+            return new object();
         }
     }
 }
