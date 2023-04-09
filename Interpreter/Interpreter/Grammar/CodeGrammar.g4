@@ -12,9 +12,10 @@ ENDIF: 'END IF';
 
 // Input Output Statements
 DISPLAY: 'DISPLAY';
+SCAN: 'SCAN';
 
 // Operators
-AND: '&';
+AND: 'AND';
 ASSIGN: '=';
 DIV: '/';
 PLUS: '+';
@@ -22,8 +23,8 @@ MOD: '%';
 MULT: '*';
 MINUS: '-';
 NEQ: '<>';
-NOT: '!';
-OR: '|';
+NOT: 'NOT';
+OR: 'OR';
 GT: '>';
 GTE: '>=';
 LT: '<';
@@ -33,6 +34,8 @@ POWER: '**';
 DOUBLEQ: '\"';
 SINGLEQ: '\'';
 DOLLAR: '$';
+AMPERSAND: '&';
+HASH: '#';
 
 // Special Characters
 COMMA: ',';
@@ -55,13 +58,13 @@ IF: 'IF';
 FALSE: 'FALSE';
 TRUE: 'TRUE';
 
-// Token Skips
+// Token Skips and Whitespaces
 WHITESPACE: [\t\r\n]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
+code: NEWLINE? BEGIN NEWLINE? statement* NEWLINE? END NEWLINE?;
 
 statement
         : declaration_statement
@@ -71,29 +74,31 @@ statement
         | COMMENT
         ;
 
-//variable_declaration: data_type identifier (ASSIGN expression)?;
-
 data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
-declaration_statement: data_type declaration NEWLINE?;
 
-assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
+declaration_statement: data_type declaration NEWLINE?;
+display_statement: DISPLAY':' expression NEWLINE?;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE?;
+scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
 
 
 expression
-    : literal                                   # literalExpression
-    | IDENTIFIER                                # identifierExpression
-    | expression AND expression                 # concatExpression
-    | expression DOLLAR expression              # newlineExpression
-    | unary_operator expression                 # unaryExpression
-    | RBRACK expression RBRACK                  # bracketExpression
-    | LPAREN expression RPAREN                  # parenthesizeExpression
-    | expression exponentOp expression          # exponentExpression    
-    | expression multOp expression              # multiplicationExpression
-    | expression addOp expression               # additionExpression
-    | expression compareOp expression           # comparisonExpression
-    | expression boolOp expression              # booleanExpression 
+    : literal                               # literalExpression
+    | DOLLAR                                # newlineExpression
+    | END                                   # endExpression
+    | IDENTIFIER                            # identifierExpression
+    | expression AMPERSAND expression       # concatExpression
+    | SYMBOL                                # specialCharExpression
+    | unary_operator expression             # unaryExpression
+    | RBRACK expression RBRACK              # bracketExpression
+    | LPAREN expression RPAREN              # parenthesizeExpression
+    | expression exponentOp expression      # exponentExpression    
+    | expression multOp expression          # multiplicationExpression
+    | expression addOp expression           # additionExpression
+    | expression compareOp expression       # comparisonExpression
+    | expression boolOp expression          # booleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
@@ -117,8 +122,7 @@ CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
 unary_operator: PLUS | MINUS;
-
-display_statement: DISPLAY':' expression AND? NEWLINE?;
+SYMBOL: '[' . ']';
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
