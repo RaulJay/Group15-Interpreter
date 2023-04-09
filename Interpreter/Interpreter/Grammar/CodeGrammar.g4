@@ -101,6 +101,7 @@ expression
     | expression addOp expression           # additionExpression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
+    | boolOp expression                     # notBooleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
