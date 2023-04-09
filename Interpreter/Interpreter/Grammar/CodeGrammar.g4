@@ -70,8 +70,7 @@ statement
         : declaration_statement
         | assignment_statement
         | display_statement
-        | scan_statement
-        | if_block
+        | if_statement
         | COMMENT
         ;
 
@@ -127,13 +126,15 @@ SYMBOL: '[' . ']';
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
-if_statement: IF LPAREN expression RPAREN if_block (ELSE ifelse_block)?;
+if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
-if_block: BEGINIF statement* ENDIF;
+condition_block: expression if_block;
 
-ifelse_block: block | if_block;
+if_block: BEGINIF block ENDIF;
 
-block: 'update me later hehe';
+//ifelse_block: if_statement | if_block;
+
+block: statement*;
 
 
 // Define the lexer rules
