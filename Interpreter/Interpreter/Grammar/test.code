@@ -1,4 +1,6 @@
-﻿BEGIN CODE
-	INT x,y
-	SCAN: x,y
+﻿BEGIN CODE 
+    INT x, y
+    STRING str = "HUY"
+    SCAN: x, y
+    DISPLAY: x + y 
 END CODE

@@ -4,6 +4,12 @@ namespace Interpreter.HelperFiles
 {
     public class ArithmeticOperation
     {
+        /// <summary>
+        /// Multiplication Operation
+        /// </summary>
+        /// <param name="x">Left Expression</param>
+        /// <param name="y">Right Expression</param>
+        /// <returns></returns>
         public object? Multiply(object x, object y)
         {
             if (x is int l && y is int r)
@@ -20,6 +26,12 @@ namespace Interpreter.HelperFiles
             return null;
         }
 
+        /// <summary>
+        /// Division Operation
+        /// </summary>
+        /// <param name="x">Left Expression</param>
+        /// <param name="y">Right Expression</param>
+        /// <returns></returns>
         public object? Divide(object x, object y)
         {
             if (x is int l && y is int r)
@@ -36,6 +48,12 @@ namespace Interpreter.HelperFiles
             return null;
         }
 
+        /// <summary>
+        /// Modulo Operation
+        /// </summary>
+        /// <param name="x">Left Expression</param>
+        /// <param name="y">Right Expression</param>
+        /// <returns></returns>
         public object? Modulo(object x, object y)
         {
             if (x is int l && y is int r)
@@ -52,6 +70,12 @@ namespace Interpreter.HelperFiles
             return null;
         }
 
+        /// <summary>
+        /// Addition Operation
+        /// </summary>
+        /// <param name="x">Left Expression</param>
+        /// <param name="y">Right Expression</param>
+        /// <returns></returns>
         public object? Add(object x, object y)
         {
             if (x is int l && y is int r)
@@ -68,6 +92,12 @@ namespace Interpreter.HelperFiles
             return null;
         }
 
+        /// <summary>
+        /// Subtraction Operation
+        /// </summary>
+        /// <param name="x">Left Expression</param>
+        /// <param name="y">Right Expression</param>
+        /// <returns></returns>
         public object? Subtract(object x, object y)
         {
             if (x is int l && y is int r)
@@ -84,6 +114,12 @@ namespace Interpreter.HelperFiles
             return null;
         }
 
+        /// <summary>
+        /// Unary Operation
+        /// </summary>
+        /// <param name="x">Left Expression</param>
+        /// <param name="y">Right Expression</param>
+        /// <returns></returns>
         public static object UnaryOperation(string symbol, object value)
         {
             switch (symbol)

@@ -79,7 +79,7 @@ namespace Interpreter.Visitors
                         var literalValue = Visit(exp[flagExp]);
                         var valueType = literalValue.GetType();
 
-                        if (valueType != type) SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
+                        if (valueType != type) SemanticErrorHandler.TypeErrorDeclaration(literalValue, context.data_type().GetText(), context.GetText());
 
                         Variable val = new Variable()
                         {
@@ -162,7 +162,7 @@ namespace Interpreter.Visitors
                 var expression = context.expression().Accept(this);
 
                 if (Variables.ContainsKey(i.GetText()) == false) SemanticErrorHandler.VariableNotDeclared(i.GetText(), context.expression().GetText());
-                if (Variables[i.GetText()].DataType != expression.GetType()) SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
+                if (Variables[i.GetText()].DataType != expression.GetType()) SemanticErrorHandler.TypeErrorAssignment(expression, Variables[i.GetText()].Type!, context.GetText());
 
                 Variables[i.GetText()].Value = expression;
             }
