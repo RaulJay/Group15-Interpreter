@@ -1,4 +1,4 @@
 ﻿BEGIN CODE
-	INT x = 3 + --4
-	DISPLAY: x
+	INT x,y
+	SCAN: x,y
 END CODE

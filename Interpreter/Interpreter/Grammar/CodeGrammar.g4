@@ -75,6 +75,7 @@ statement
         : declaration_statement
         | assignment_statement
         | display_statement
+        | scan_statement
         | if_statement
         | while_statement
         | COMMENT
