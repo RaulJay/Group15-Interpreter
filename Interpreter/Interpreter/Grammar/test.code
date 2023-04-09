@@ -1,4 +1,4 @@
 ﻿BEGIN CODE
-    INT x = 3
-    DISPLAY: ++x
+    BOOL x = "TRUE"
+    DISPLAY: NOT x
 END CODE
