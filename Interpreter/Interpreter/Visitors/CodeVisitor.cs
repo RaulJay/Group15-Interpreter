@@ -477,9 +477,16 @@ namespace Interpreter.Visitors
         public override object VisitWhile_statement([NotNull] CodeGrammarParser.While_statementContext context)
         {
             var value = Visit(context.expression());
+            int currIterations = 0;
+            int maxIterations = 100000;
 
             while ((string)value == "True")
             {
+                currIterations++;
+                if(currIterations > maxIterations)
+                {
+                    throw new Exception("Possible infinite loop detected");
+                }
                 Visit(context.while_block());
 
                 value = Visit(context.expression());

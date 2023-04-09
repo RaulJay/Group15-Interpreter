@@ -1,9 +1,15 @@
 ﻿BEGIN CODE
     STRING f = "Hello World"
-    INT x = 1 , y = 2 , z = 3
+    INT x = 1 , y = 4 , z = 3
     WHILE (x < z)
     BEGIN WHILE
+        WHILE (y < 7)
+        BEGIN WHILE
+            y = y + 1
+            DISPLAY: y & $
+        END WHILE
+        y = 4
         x = x + 1
-        DISPLAY: x
+        DISPLAY: x & $
     END WHILE
 END CODE
