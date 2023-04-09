@@ -1,15 +1,9 @@
 ﻿BEGIN CODE
     STRING f = "Hello World"
     INT x = 1 , y = 2 , z = 3
-    IF (x > y)
-    BEGIN IF
-        DISPLAY "wario"
-    END IF
-    ELSE IF (x < y)
-    BEGIN IF
-        IF ((x + y) == z)
-        BEGIN IF
-            DISPLAY f
-        END IF
-    END IF
+    WHILE (x < z)
+    BEGIN WHILE
+        x = x + 1
+        DISPLAY: x
+    END WHILE
 END CODE

@@ -458,7 +458,7 @@ namespace Interpreter.Visitors
             {
                 var evaluated = Visit(condition.expression());
 
-                if ((string)evaluated == "TRUE")
+                if ((string)evaluated == "True")
                 {
                     evaluatedBlock = true;
                     Visit(condition.if_block());
@@ -469,6 +469,20 @@ namespace Interpreter.Visitors
             if (!evaluatedBlock && context.if_block() != null)
             {
                 Visit(context.if_block());
+            }
+
+            return null;
+        }
+
+        public override object VisitWhile_statement([NotNull] CodeGrammarParser.While_statementContext context)
+        {
+            var value = Visit(context.expression());
+
+            while ((string)value == "True")
+            {
+                Visit(context.while_block());
+
+                value = Visit(context.expression());
             }
 
             return null;
