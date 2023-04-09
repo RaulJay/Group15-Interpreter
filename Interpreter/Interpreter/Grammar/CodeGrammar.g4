@@ -123,6 +123,7 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
+SYMBOL: '['.']';
 
 unary_operator: PLUS | MINUS | INCREMENT | DECREMENT;
 
