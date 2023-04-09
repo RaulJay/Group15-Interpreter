@@ -63,6 +63,15 @@ namespace Interpreter.ErrorHandling
             Environment.Exit(400);
         }
 
+        public static void VariableNotDeclared(string variableName, string text)
+        {
+            int location = CodeLine(text);
+
+            Console.Error.WriteLine($"Semantic Error: Variable Expression at line {location}");
+            Console.Error.WriteLine($"Variable {variableName} is not declared");
+            Environment.Exit(400);
+        }
+
         public static void ScanErrorNotExist(string text, string varName)
         {
             int location = CodeLine(text);

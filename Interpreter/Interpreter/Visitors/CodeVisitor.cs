@@ -24,7 +24,7 @@ namespace Interpreter.Visitors
         /// <summary>
         /// Identifier expression Visitor
         /// </summary>
-        /// <param name="context">Identifier Expression Context</param>
+        /// <param name="context">Identifier Expression</param>
         /// <returns>Value stored in Variable</returns>
         public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
         {
@@ -41,7 +41,18 @@ namespace Interpreter.Visitors
             return new object();
         }
 
-
+        /// <summary>
+        /// Visitor for Declaration Statement.
+        /// Declarations includes the following:
+        /// 1. Declaration of a variable without value.
+        /// 2. Declaration of a variable with value.
+        /// 3. Declaration of multiple vaaibles with or without value.
+        /// Error Handling:
+        /// 1. Variable already declared.
+        /// 2. Type Error.
+        /// </summary>
+        /// <param name="context">Declaration Statement</param>
+        /// <returns></returns>
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
         {
             String varName;
@@ -56,10 +67,8 @@ namespace Interpreter.Visitors
 
             for (int i = 0; i < declaration.Length; i++)
             {
-                if (Variables.ContainsKey(varNames[i].GetText()))
-                {
-                    SemanticErrorHandler.VariableAlreadyDeclared(varNames[i].GetText(), context.GetText());
-                }
+                if (Variables.ContainsKey(varNames[i].GetText())) SemanticErrorHandler.VariableAlreadyDeclared(varNames[i].GetText(), context.GetText());
+                
                 if (declaration[i].Contains('='))
                 {
                     if (flagExp < exp.Count())
@@ -69,10 +78,7 @@ namespace Interpreter.Visitors
                         var literalValue = Visit(exp[flagExp]);
                         var valueType = literalValue.GetType();
 
-                        if (valueType != type)
-                        {
-                            SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
-                        }
+                        if (valueType != type) SemanticErrorHandler.TypeErrorDeclaration(type!, literalValue, context.data_type().GetText(), context.GetText());
 
                         Variable val = new Variable()
                         {
@@ -102,6 +108,17 @@ namespace Interpreter.Visitors
             return new object();
         }
 
+        /// <summary>
+        /// Visitor for Assignment Statement.
+        /// Assignment Includes:
+        /// 1. Assign value to a Variable.
+        /// 2. Multiple Assignment.
+        /// Error Handling:
+        /// 1. Variable is not declared
+        /// 2. Variable type not the same as the value type.
+        /// </summary>
+        /// <param name="context">Assignment Statement</param>
+        /// <returns></returns>
         public override object VisitAssignment_statement([NotNull] CodeGrammarParser.Assignment_statementContext context)
         {
             var identifier = context.IDENTIFIER();
@@ -109,10 +126,9 @@ namespace Interpreter.Visitors
             {
                 var expression = context.expression().Accept(this);
 
-                if (Variables[i.GetText()].DataType != expression.GetType())
-                {
-                    SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
-                }
+                if (Variables.ContainsKey(i.GetText()) == false) SemanticErrorHandler.VariableNotDeclared(i.GetText(), context.expression().GetText());
+                if (Variables[i.GetText()].DataType != expression.GetType()) SemanticErrorHandler.TypeErrorAssignment(Variables[i.GetText()].DataType!, expression, Variables[i.GetText()].Type!, context.GetText());
+
                 Variables[i.GetText()].Value = expression;
             }
 
