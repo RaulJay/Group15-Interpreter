@@ -440,8 +440,6 @@ namespace Interpreter.Visitors
                     return (dynamic)left && right;
                 case "OR":
                     return (dynamic)left || right;
-                case "NOT":
-                    return !(dynamic)left && right;
                 default:
                     throw new NotSupportedException($"Boolean operator {context.boolOp().GetText()} is not supported.");
             }
@@ -471,6 +469,12 @@ namespace Interpreter.Visitors
             }
 
             return new object();
+        }
+
+        public override object VisitNotBooleanExpression([NotNull] CodeGrammarParser.NotBooleanExpressionContext context)
+        {
+            var right = Convert.ToBoolean(Visit(context.expression()));
+            return !(dynamic)right;
         }
     }
 }
