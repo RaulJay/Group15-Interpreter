@@ -1,14 +1,19 @@
 ﻿BEGIN CODE
-    STRING f = "Hello World"
-    INT x = 1 , y = 4 , z = 3
-    WHILE (x < z)
+	INT x, y, z=5 
+	CHAR a_1='n' 
+	BOOL t="TRUE"
+	x=y=4
+	a_1='c'
+	# this is a comment
+	DISPLAY: x & t & z & $ & a_1 & [#] & "last"
+	WHILE (x < z)
     BEGIN WHILE
         WHILE (y < 7)
         BEGIN WHILE
             y = y + 1
             DISPLAY: y & $
         END WHILE
-        y = 4
+        y = 5
         x = x + 1
         DISPLAY: x & $
     END WHILE

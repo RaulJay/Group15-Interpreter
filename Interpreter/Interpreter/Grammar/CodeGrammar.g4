@@ -19,7 +19,9 @@ SCAN: 'SCAN';
 // Operators
 AND: 'AND';
 ASSIGN: '=';
+DECREMENT: '--';
 DIV: '/';
+INCREMENT: '++';
 PLUS: '+';
 MOD: '%';
 MULT: '*';
@@ -95,7 +97,7 @@ expression
     | IDENTIFIER                            # identifierExpression
     | expression AMPERSAND expression       # concatExpression
     | SYMBOL                                # specialCharExpression
-    | unary_operator expression             # unaryExpression
+    | unary_operator expression            # unaryExpression
     | RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
     | expression exponentOp expression      # exponentExpression    
@@ -103,6 +105,7 @@ expression
     | expression addOp expression           # additionExpression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
+    | boolOp expression                     # notBooleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
@@ -124,9 +127,9 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
+SYMBOL: '['.']';
 
-unary_operator: PLUS | MINUS;
-SYMBOL: '[' . ']';
+unary_operator: PLUS | MINUS | INCREMENT | DECREMENT;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
