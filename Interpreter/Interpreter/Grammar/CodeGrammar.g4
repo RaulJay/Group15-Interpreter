@@ -17,7 +17,9 @@ SCAN: 'SCAN';
 // Operators
 AND: 'AND';
 ASSIGN: '=';
+DECREMENT: '--';
 DIV: '/';
+INCREMENT: '++';
 PLUS: '+';
 MOD: '%';
 MULT: '*';
@@ -121,8 +123,7 @@ STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 
-unary_operator: PLUS | MINUS;
-SYMBOL: '[' . ']';
+unary_operator: PLUS | MINUS | INCREMENT | DECREMENT;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 

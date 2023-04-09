@@ -1,5 +1,4 @@
 ﻿BEGIN CODE
-# Comment
-# This is a comment
-	DISPLAY: ++3
+    INT x = 3
+    DISPLAY: ++x
 END CODE
