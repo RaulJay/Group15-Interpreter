@@ -455,7 +455,7 @@ namespace Interpreter.Visitors
             {
                 var evaluated = Visit(condition.expression());
 
-                if ((string)evaluated == "True")
+                if ((string)evaluated == "TRUE")
                 {
                     evaluatedBlock = true;
                     Visit(condition.if_block());
@@ -483,7 +483,7 @@ namespace Interpreter.Visitors
             int currIterations = 0;
             int maxIterations = 100000;
 
-            while ((string)value == "True")
+            while ((string)value == "TRUE")
             {
                 currIterations++;
                 if(currIterations > maxIterations)
