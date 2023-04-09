@@ -476,5 +476,26 @@ namespace Interpreter.Visitors
             var right = Convert.ToBoolean(Visit(context.expression()));
             return !(dynamic)right;
         }
+
+        public override object VisitWhile_statement([NotNull] CodeGrammarParser.While_statementContext context)
+        {
+            var value = Visit(context.expression());
+            int currIterations = 0;
+            int maxIterations = 100000;
+
+            while ((string)value == "TRUE")
+            {
+                currIterations++;
+                if(currIterations > maxIterations)
+                {
+                    throw new Exception("Possible infinite loop detected");
+                }
+                Visit(context.while_block());
+
+                value = Visit(context.expression());
+            }
+
+            return null;
+        }
     }
 }

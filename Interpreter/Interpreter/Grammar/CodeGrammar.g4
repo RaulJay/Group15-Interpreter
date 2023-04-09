@@ -5,10 +5,12 @@
 // Begin Statements
 BEGIN: 'BEGIN CODE';
 BEGINIF: 'BEGIN IF';
+BEGINWHILE: 'BEGIN WHILE';
 
 // End Statements
 END: 'END CODE';
 ENDIF: 'END IF';
+ENDWHILE: 'END WHILE';
 
 // Input Output Statements
 DISPLAY: 'DISPLAY';
@@ -59,6 +61,7 @@ ELSE: 'ELSE';
 IF: 'IF';
 FALSE: 'FALSE';
 TRUE: 'TRUE';
+WHILE: 'WHILE';
 
 // Token Skips and Whitespaces
 WHITESPACE: [\t\r\n]+ -> skip;
@@ -73,6 +76,7 @@ statement
         | assignment_statement
         | display_statement
         | if_statement
+        | while_statement
         | COMMENT
         ;
 
@@ -135,7 +139,9 @@ condition_block: expression if_block;
 
 if_block: BEGINIF block ENDIF;
 
-//ifelse_block: if_statement | if_block;
+while_statement: WHILE expression while_block;
+
+while_block: BEGINWHILE block ENDWHILE;
 
 block: statement*;
 
