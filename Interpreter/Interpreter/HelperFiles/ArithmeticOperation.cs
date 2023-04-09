@@ -1,6 +1,6 @@
 ﻿
 
-namespace Interpreter.ArithmeticOperations
+namespace Interpreter.HelperFiles
 {
     public class ArithmeticOperation
     {
@@ -82,6 +82,47 @@ namespace Interpreter.ArithmeticOperations
                 return $"{x}{y}";
 
             return null;
+        }
+
+        public static object UnaryOperation(string symbol, object value)
+        {
+            switch (symbol)
+            {
+                case "+":
+                    return value;
+                case "-":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return -intValue;
+                        case float floatValue:
+                            return -floatValue;
+                        default:
+                            throw new ArgumentException("Unary negation is not supported for this value type.");
+                    }
+                case "++":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return ++intValue;
+                        case float floatValue:
+                            return ++floatValue;
+                        default:
+                            throw new ArgumentException("Unary increment is not supported for this value type.");
+                    }
+                case "--":
+                    switch (value)
+                    {
+                        case int intValue:
+                            return --intValue;
+                        case float floatValue:
+                            return --floatValue;
+                        default:
+                            throw new ArgumentException("Unary decrement is not supported for this value type.");
+                    }
+                default:
+                    throw new ArgumentException($"Unary operator {symbol} is not supported.");
+            }
         }
     }
 }

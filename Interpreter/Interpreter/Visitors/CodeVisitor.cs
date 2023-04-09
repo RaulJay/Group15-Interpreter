@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
 using Antlr4.Runtime;
-using Interpreter.ArithmeticOperations;
+using Interpreter.HelperFiles;
 using Interpreter.Grammar;
 using Microsoft.Win32.SafeHandles;
 using Interpreter.ErrorHandling;
@@ -21,6 +21,11 @@ namespace Interpreter.Visitors
         private Dictionary<string, Variable> Variables { get; } = new Dictionary<string, Variable>();
         private ArithmeticOperation arithmeticOperation = new ArithmeticOperation();
 
+        /// <summary>
+        /// Identifier expression Visitor
+        /// </summary>
+        /// <param name="context">Identifier Expression Context</param>
+        /// <returns>Value stored in Variable</returns>
         public override object VisitIdentifierExpression([NotNull] CodeGrammarParser.IdentifierExpressionContext context)
         {
             var identifier = context.IDENTIFIER().GetText();
@@ -30,8 +35,10 @@ namespace Interpreter.Visitors
             }
             else
             {
-                throw new Exception($"Variable {identifier} is not declared");
+                SemanticErrorHandler.VariableNotDeclared(context.IDENTIFIER().GetText());
             }
+
+            return new object();
         }
 
         public override object VisitDeclaration_statement([NotNull] CodeGrammarParser.Declaration_statementContext context)
@@ -143,43 +150,6 @@ namespace Interpreter.Visitors
             return new object();
         }
 
-
-        public static (Type,object) TypeParser(string input)
-        {
-
-            if (int.TryParse(input, out int intValue))
-            {
-                return (typeof(int), intValue);
-            }
-            else if (float.TryParse(input, out float floatValue))
-            {
-                return (typeof(float), floatValue);
-            }
-            else if (char.TryParse(input, out char charValue))
-            {
-                return (typeof(char), charValue);
-            }
-            else if (Regex.IsMatch(input, @"^[A-Za-z]+$"))
-            {
-                if (input == "TRUE")
-                {
-                    return (typeof(bool), bool.Parse("true"));
-                }
-                else if (input == "FALSE")
-                {
-                    return (typeof(bool), bool.Parse("false"));
-                }
-                else
-                {
-                    return (typeof(String), input);
-                }
-            }
-            else
-            {
-                return (typeof(String), input);
-            }
-        }
-
         public override object VisitScan_statement([NotNull] CodeGrammarParser.Scan_statementContext context)
         {
             int flagvarNames = 0;
@@ -220,8 +190,8 @@ namespace Interpreter.Visitors
             foreach(var input in inputs)
             {
 
-                Type inputType = TypeParser(input).Item1;
-                var value = TypeParser(input).Item2;
+                Type inputType = HelperFunctions.TypeParser(input).Item1;
+                var value = HelperFunctions.TypeParser(input).Item2;
 
                 if (inputType == Variables[varNames[flagvarNames].GetText()].DataType)
                 { 
@@ -258,19 +228,6 @@ namespace Interpreter.Visitors
         public override object VisitSpecialCharExpression([NotNull] CodeGrammarParser.SpecialCharExpressionContext context)
         {
             return context.SYMBOL().GetText()[1];
-        }
-
-        public object? SpecialChar(object? specialChar)
-        {
-            if (specialChar != null)
-            {
-                specialChar = Convert.ToChar(specialChar);
-                return $"{specialChar}";
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid escape sequence: {specialChar}");
-            }
         }
 
         public override object VisitLiteralExpression([NotNull] CodeGrammarParser.LiteralExpressionContext context)
@@ -314,48 +271,7 @@ namespace Interpreter.Visitors
 
         public override object VisitUnaryExpression([NotNull] CodeGrammarParser.UnaryExpressionContext context)
         {
-            return UnaryOperation(context.unary_operator().GetText(), Visit(context.expression()));
-        }
-
-        public static object UnaryOperation(string symbol, object value)
-        {
-            switch (symbol)
-            {
-                case "+":
-                    return value;
-                case "-":
-                    switch (value)
-                    {
-                        case int intValue:
-                            return -intValue;
-                        case float floatValue:
-                            return -floatValue;
-                        default:
-                            throw new ArgumentException("Unary negation is not supported for this value type.");
-                    }
-                case "++":
-                    switch (value)
-                    {
-                        case int intValue:
-                            return ++intValue;
-                        case float floatValue:
-                            return ++floatValue;
-                        default:
-                            throw new ArgumentException("Unary increment is not supported for this value type.");
-                    }
-                case "--":
-                    switch (value)
-                    {
-                        case int intValue:
-                            return --intValue;
-                        case float floatValue:
-                            return --floatValue;
-                        default:
-                            throw new ArgumentException("Unary decrement is not supported for this value type.");
-                    }
-                default:
-                    throw new ArgumentException($"Unary operator {symbol} is not supported.");
-            }
+            return ArithmeticOperation.UnaryOperation(context.unary_operator().GetText(), Visit(context.expression()));
         }
 
         public override object VisitBracketExpression([NotNull] CodeGrammarParser.BracketExpressionContext context)

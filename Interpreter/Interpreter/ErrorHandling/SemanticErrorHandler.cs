@@ -78,5 +78,11 @@ namespace Interpreter.ErrorHandling
             Console.Error.WriteLine($"Input has {inputs} value while Scan only takes {varNames} inputs");
             Environment.Exit(400);
         }
+
+        public static void VariableNotDeclared(string text)
+        {
+            Console.Error.WriteLine($"Semantic Error: Variable {text} is not declared");
+            Environment.Exit(400);
+        }
     }
 }
