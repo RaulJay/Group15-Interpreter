@@ -464,17 +464,17 @@ namespace Interpreter.Visitors
             switch (op)
             {
                 case "<":
-                    return (dynamic)left < (dynamic)right? "TRUE": "FALSE";
+                    return (dynamic)left < (dynamic)right? true: false;
                 case "<=":
-                    return (dynamic)left <= (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left <= (dynamic)right ? true : false;
                 case ">":
-                    return (dynamic)left > (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left > (dynamic)right ? true : false;
                 case ">=":
-                    return (dynamic)left >= (dynamic)right ? "TRUE" : "FALSE"; ;
+                    return (dynamic)left >= (dynamic)right ? true : false;
                 case "==":
-                    return (dynamic)left == (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left == (dynamic)right ? true : false;
                 case "<>":
-                    return (dynamic)left != (dynamic)right ? "TRUE" : "FALSE";
+                    return (dynamic)left != (dynamic)right ? true : false;
                 default:
                     throw new Exception($"Invalid comparison operator: {op}");
             }
@@ -528,7 +528,7 @@ namespace Interpreter.Visitors
             {
                 var evaluated = Visit(condition.expression());
 
-                if ((string)evaluated == "TRUE")
+                if (bool.Parse(evaluated.ToString()!) == true)
                 {
                     evaluatedBlock = true;
                     Visit(condition.if_block());
@@ -566,15 +566,16 @@ namespace Interpreter.Visitors
         {
             var value = Visit(context.expression());
             int currIterations = 0;
-            int maxIterations = 100000;
+            int maxIterations = 1000;
 
-            while ((string)value == "TRUE")
+            while (bool.Parse(value.ToString()!) == true)
             {
                 currIterations++;
-                if(currIterations > maxIterations)
+                if (currIterations > maxIterations)
                 {
                     SemanticErrorHandler.WhileInfiniteLoop(context.GetText());
                 }
+
                 Visit(context.while_block());
 
                 value = Visit(context.expression());
