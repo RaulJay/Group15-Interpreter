@@ -1,15 +1,6 @@
-﻿BEGIN CODE
-	INT x, y, z=5
-	CHAR a_1='n' 
-	BOOL t="TRUE"
-	x=y=4
-	a_1='c'
-	# this is a comment
-	DISPLAY: x & t & z & $ & a_1 & [#] & "last" & $
-    INT a = 1, b = 5
-	WHILE (a <= b)
-    BEGIN WHILE
-        a = a + 1
-		DISPLAY: a & $
-    END WHILE
+﻿BEGIN CODE 
+    INT x, y
+    STRING str = "HUY"
+    SCAN: x, y
+    DISPLAY: x + y 
 END CODE

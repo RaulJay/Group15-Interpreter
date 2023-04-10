@@ -9,6 +9,18 @@ namespace Interpreter.HelperFiles
 {
     public class HelperFunctions
     {
+        /// <summary>
+        /// Type Parser function
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>
+        /// Value of Type:
+        /// 1. int
+        /// 2. float
+        /// 3. char
+        /// 4. bool
+        /// 5. string
+        /// </returns>
         public static (Type, object) TypeParser(string input)
         {
 
