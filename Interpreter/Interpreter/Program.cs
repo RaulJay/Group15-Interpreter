@@ -3,36 +3,32 @@ using Interpreter.Visitors;
 using Interpreter.Grammar;
 using Interpreter.ErrorHandling;
 
-var file = "..\\..\\..\\Grammar\\test.code";
-var fileContents = File.ReadAllText(file);
+bool isContinue = true;
 
-var inputStream = new AntlrInputStream(fileContents);
+while(isContinue) {
+    var file = "..\\..\\..\\Grammar\\test.code";
+    var fileContents = File.ReadAllText(file);
 
-// Create a lexer and parser for the code
-var codeLexer = new CodeGrammarLexer(inputStream);
-CommonTokenStream commonTokenStream = new CommonTokenStream(codeLexer);
-var codeParser = new CodeGrammarParser(commonTokenStream);
+    var inputStream = new AntlrInputStream(fileContents);
 
-// Error Listener
-var errorListener = new ErrorListener();
-codeParser.AddErrorListener(errorListener);
+    // Create a lexer and parser for the code
+    var codeLexer = new CodeGrammarLexer(inputStream);
+    CommonTokenStream commonTokenStream = new CommonTokenStream(codeLexer);
+    var codeParser = new CodeGrammarParser(commonTokenStream);
 
-var codeContext = codeParser.code();
-// Parse the code and walk the parse tree using the CodeVisitor
-var visitor = new CodeVisitor();
-visitor.VisitCode(codeContext);
+    // Error Listener
+    var errorListener = new ErrorListener();
+    codeParser.AddErrorListener(errorListener);
 
-//Console.ReadLine();
+    var codeContext = codeParser.code();
+    // Parse the code and walk the parse tree using the CodeVisitor
+    var visitor = new CodeVisitor();
+    visitor.VisitCode(codeContext);
 
-/*
-// Create a lexer and parser for the code
-var inputStream = new AntlrInputStream(fileContents);
-var lexer = new CodeGrammarLexer(inputStream);
-var tokenStream = new CommonTokenStream(lexer);
-var parser = new CodeGrammarParser(tokenStream);
-var codeContext = codeParser.code();
+    Console.WriteLine("\n\n");
+    Console.Write("Finish?(Y/N): ");
+    _ = Console.ReadLine()[0] == 'N' ? isContinue = true : isContinue = false;
 
-// Parse the code and walk the parse tree using the CodeVisitor
-var visitor = new CodeVisitor();
-visitor.Visit(parser.code());
-*/
+    Console.WriteLine("********************************************************************");
+    Console.WriteLine("\n\n");
+}
