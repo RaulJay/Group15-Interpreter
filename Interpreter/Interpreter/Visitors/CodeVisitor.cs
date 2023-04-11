@@ -571,7 +571,8 @@ namespace Interpreter.Visitors
             while ((string)value == "TRUE")
             {
                 currIterations++;
-                if(currIterations > maxIterations)
+                if (currIterations > maxIterations)
+
                 {
                     SemanticErrorHandler.WhileInfiniteLoop(context.GetText());
                 }
