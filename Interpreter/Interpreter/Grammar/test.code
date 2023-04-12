@@ -1,6 +1,4 @@
-BEGIN CODE
-	INT x, y
-	FLOAT a
-	SCAN: x,y,a
-	DISPLAY: x + y + a
+﻿BEGIN CODE
+	INT x = 4
+	DISPLAY: x
 END CODE
