@@ -115,7 +115,11 @@ namespace Interpreter.HelperFiles
         }
 
         /// <summary>
-        /// Unary Operation
+        /// Unary Operations:
+        /// 1. Unary Plus
+        /// 2. Unary Minus
+        /// 3. Unary Increment
+        /// 4. Unary Decrement
         /// </summary>
         /// <param name="x">Left Expression</param>
         /// <param name="y">Right Expression</param>
