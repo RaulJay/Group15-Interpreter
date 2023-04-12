@@ -5,25 +5,30 @@
 // Begin Statements
 BEGIN: 'BEGIN CODE';
 BEGINIF: 'BEGIN IF';
+BEGINWHILE: 'BEGIN WHILE';
 
 // End Statements
 END: 'END CODE';
 ENDIF: 'END IF';
+ENDWHILE: 'END WHILE';
 
 // Input Output Statements
 DISPLAY: 'DISPLAY';
+SCAN: 'SCAN';
 
 // Operators
-AND: '&';
+AND: 'AND';
 ASSIGN: '=';
+DECREMENT: '--';
 DIV: '/';
+INCREMENT: '++';
 PLUS: '+';
 MOD: '%';
 MULT: '*';
 MINUS: '-';
 NEQ: '<>';
-NOT: '!';
-OR: '|';
+NOT: 'NOT';
+OR: 'OR';
 GT: '>';
 GTE: '>=';
 LT: '<';
@@ -33,6 +38,8 @@ POWER: '**';
 DOUBLEQ: '\"';
 SINGLEQ: '\'';
 DOLLAR: '$';
+AMPERSAND: '&';
+HASH: '#';
 
 // Special Characters
 COMMA: ',';
@@ -54,46 +61,52 @@ ELSE: 'ELSE';
 IF: 'IF';
 FALSE: 'FALSE';
 TRUE: 'TRUE';
+WHILE: 'WHILE';
 
-// Token Skips
+// Token Skips and Whitespaces
 WHITESPACE: [\t\r\n]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE statement* NEWLINE END;
+code: NEWLINE? BEGIN NEWLINE? statement* NEWLINE? END NEWLINE? EOF;
 
 statement
         : declaration_statement
         | assignment_statement
         | display_statement
-        | if_block
+        | scan_statement
+        | if_statement
+        | while_statement
         | COMMENT
         ;
-
-//variable_declaration: data_type identifier (ASSIGN expression)?;
 
 data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
 declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
-declaration_statement: data_type declaration NEWLINE?;
 
-assignment_statement: (IDENTIFIER ASSIGN)+ expression?;
+declaration_statement: data_type declaration NEWLINE?;
+display_statement: DISPLAY':' expression NEWLINE?;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE?;
+scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
 
 
 expression
-    : literal                                   # literalExpression
-    | IDENTIFIER                                # identifierExpression
-    | expression AND expression                 # concatExpression
-    | expression DOLLAR expression              # newlineExpression
-    | unary_operator expression                 # unaryExpression
-    | RBRACK expression RBRACK                  # bracketExpression
-    | LPAREN expression RPAREN                  # parenthesizeExpression
-    | expression exponentOp expression          # exponentExpression    
-    | expression multOp expression              # multiplicationExpression
-    | expression addOp expression               # additionExpression
-    | expression compareOp expression           # comparisonExpression
-    | expression boolOp expression              # booleanExpression 
+    : literal                               # literalExpression
+    | DOLLAR                                # newlineExpression
+    | END                                   # endExpression
+    | IDENTIFIER                            # identifierExpression
+    | expression AMPERSAND expression       # concatExpression
+    | SYMBOL                                # specialCharExpression
+    | unary_operator expression            # unaryExpression
+    | RBRACK expression RBRACK              # bracketExpression
+    | LPAREN expression RPAREN              # parenthesizeExpression
+    | expression exponentOp expression      # exponentExpression    
+    | expression multOp expression          # multiplicationExpression
+    | expression addOp expression           # additionExpression
+    | expression compareOp expression       # comparisonExpression
+    | expression boolOp expression          # booleanExpression 
+    | boolOp expression                     # notBooleanExpression 
     ;
 
 multOp: MULT | DIV | MOD ;
@@ -115,20 +128,23 @@ FLOATING: [0-9]+ '.' [0-9]+;
 STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
+SYMBOL: '['.']';
 
-unary_operator: PLUS | MINUS;
-
-display_statement: DISPLAY':' expression AND? NEWLINE?;
+unary_operator: PLUS | MINUS | INCREMENT | DECREMENT;
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
-if_statement: IF LPAREN expression RPAREN if_block (ELSE ifelse_block)?;
+if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
-if_block: BEGINIF statement* ENDIF;
+condition_block: expression if_block;
 
-ifelse_block: block | if_block;
+if_block: BEGINIF block ENDIF;
 
-block: 'update me later hehe';
+while_statement: WHILE expression while_block;
+
+while_block: BEGINWHILE block ENDWHILE;
+
+block: statement*;
 
 
 // Define the lexer rules

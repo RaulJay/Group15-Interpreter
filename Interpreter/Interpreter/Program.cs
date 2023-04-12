@@ -3,37 +3,34 @@ using Interpreter.Visitors;
 using Interpreter.Grammar;
 using Interpreter.ErrorHandling;
 
-var file = "..\\..\\..\\Grammar\\test.code";
+bool isContinue = true;
 
-var fileContents = File.ReadAllText(file);
+while(isContinue) {
+    var file = "..\\..\\..\\Grammar\\test.code";
+    var fileContents = File.ReadAllText(file);
 
-var inputStream = new AntlrInputStream(fileContents);
+    var inputStream = new AntlrInputStream(fileContents);
 
-// Create a lexer and parser for the code
-var codeLexer = new CodeGrammarLexer(inputStream);
-CommonTokenStream commonTokenStream = new CommonTokenStream(codeLexer);
-var codeParser = new CodeGrammarParser(commonTokenStream);
+    // Create a lexer and parser for the code
+    var codeLexer = new CodeGrammarLexer(inputStream);
+    CommonTokenStream commonTokenStream = new CommonTokenStream(codeLexer);
+    var codeParser = new CodeGrammarParser(commonTokenStream);
 
-// Error Listener
-//var errorListener = new ErrorListener();
-//codeParser.AddErrorListener(errorListener);
+    // Error Listener
+    var errorListener = new ErrorListener();
+    codeParser.AddErrorListener(errorListener);
 
-var codeContext = codeParser.code();
-// Parse the code and walk the parse tree using the CodeVisitor
-var visitor = new CodeVisitor();
-visitor.VisitCode(codeContext);
+    var codeContext = codeParser.code();
+    // Parse the code and walk the parse tree using the CodeVisitor
+    var visitor = new CodeVisitor();
+    visitor.VisitCode(codeContext);
 
-//Console.ReadLine();
+    Console.WriteLine("\n\n");
+    Console.Write("Finish?(Y/N): ");
+    var finish = Console.ReadLine()![0];
 
-/*
-// Create a lexer and parser for the code
-var inputStream = new AntlrInputStream(fileContents);
-var lexer = new CodeGrammarLexer(inputStream);
-var tokenStream = new CommonTokenStream(lexer);
-var parser = new CodeGrammarParser(tokenStream);
-var codeContext = codeParser.code();
+    isContinue = (finish == 'N' || finish == 'n') ? true : false;
 
-// Parse the code and walk the parse tree using the CodeVisitor
-var visitor = new CodeVisitor();
-visitor.Visit(parser.code());
-*/
+    Console.WriteLine("********************************************************************");
+    Console.WriteLine("\n\n");
+}
