@@ -1,4 +1,3 @@
 ﻿BEGIN CODE
-	INT x = 4
-	DISPLAY: x
+	INT x = -5 DISPLAY: x
 END CODE

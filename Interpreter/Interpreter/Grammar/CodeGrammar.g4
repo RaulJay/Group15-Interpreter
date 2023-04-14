@@ -64,12 +64,12 @@ TRUE: 'TRUE';
 WHILE: 'WHILE';
 
 // Token Skips and Whitespaces
-WHITESPACE: [\t\r\n]+ -> skip;
+WHITESPACE: [\t\r]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE? statement* NEWLINE? END NEWLINE? EOF;
+code: NEWLINE? BEGIN NEWLINE? (statement NEWLINE+)* END NEWLINE? EOF;
 
 statement
         : declaration_statement

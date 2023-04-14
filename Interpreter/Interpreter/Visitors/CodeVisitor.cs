@@ -58,6 +58,7 @@ namespace Interpreter.Visitors
         {
             String varName;
             // Extract variable data type
+
             var type = Visit(context.data_type()) as Type;
 
             var varNames = context.declaration().IDENTIFIER();
