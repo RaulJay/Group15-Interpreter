@@ -136,6 +136,14 @@ namespace Interpreter.Visitors
                     return typeof(char);
                 case "STRING":
                     return typeof(string);
+                case "INT[]":
+                    return typeof(int[]);
+                case "FLOAT[]":
+                    return typeof(float[]);
+                case "BOOL[]":
+                    return typeof(bool[]);
+                case "STRING[]":
+                    return typeof(string[]);
                 default:
                     SemanticErrorHandler.DataTypeError(context.GetText());
                     return new object();

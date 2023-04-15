@@ -107,6 +107,7 @@ expression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
     | boolOp expression                     # notBooleanExpression 
+    | array                                 # arrayExpression
     ;
 
 multOp: MULT | DIV | MOD ;
@@ -129,6 +130,8 @@ STRINGS: ('"' ~'"'* '"');
 CHARA: ('\'' ~'\''* '\'');
 BOOLEAN: TRUE | FALSE;
 SYMBOL: '['.']';
+
+array: LBRACK (expression (COMMA expression)*)? RBRACK;
 
 unary_operator: PLUS | MINUS | INCREMENT | DECREMENT;
 
