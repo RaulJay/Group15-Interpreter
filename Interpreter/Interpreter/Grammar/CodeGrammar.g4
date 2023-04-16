@@ -69,11 +69,10 @@ COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE? (statement NEWLINE+)* END NEWLINE? EOF;
+code: NEWLINE? BEGIN NEWLINE? (declaration_statement NEWLINE+)* (statement NEWLINE+)* END NEWLINE? EOF;
 
 statement
-        : declaration_statement
-        | assignment_statement
+        : assignment_statement
         | display_statement
         | scan_statement
         | if_statement
@@ -95,7 +94,6 @@ expression
     : literal                               # literalExpression
     | DOLLAR                                # newlineExpression
     | END                                   # endExpression
-    | IDENTIFIER                            # identifierExpression
     | expression AMPERSAND expression       # concatExpression
     | SYMBOL                                # specialCharExpression
     | unary_operator expression            # unaryExpression
@@ -107,6 +105,7 @@ expression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
     | boolOp expression                     # notBooleanExpression 
+    | IDENTIFIER                            # identifierExpression
     ;
 
 multOp: MULT | DIV | MOD ;

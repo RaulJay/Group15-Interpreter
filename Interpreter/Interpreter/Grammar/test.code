@@ -1,3 +1,5 @@
 ﻿BEGIN CODE
-	INT x = -5 DISPLAY: x
+	INT x = 3
+	INT y = 4
+	DISPLAY: x + y
 END CODE
