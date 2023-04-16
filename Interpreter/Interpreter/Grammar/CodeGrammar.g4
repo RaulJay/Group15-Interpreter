@@ -69,7 +69,7 @@ COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE? (declaration_statement NEWLINE+)* (statement NEWLINE+)* END NEWLINE? EOF;
+code: NEWLINE* BEGIN NEWLINE* (declaration_statement NEWLINE+)* (statement NEWLINE+)* END NEWLINE* EOF;
 
 statement
         : assignment_statement
@@ -82,12 +82,12 @@ statement
 
 data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
-declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
+declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)*;
 
-declaration_statement: data_type declaration NEWLINE?;
-display_statement: DISPLAY':' expression NEWLINE?;
-assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE?;
-scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
+declaration_statement: data_type declaration NEWLINE*;
+display_statement: DISPLAY':' expression NEWLINE*;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE*;
+scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE*;
 
 
 expression
@@ -141,7 +141,7 @@ if_block: BEGINIF block ENDIF;
 
 while_statement: WHILE expression while_block;
 
-while_block: BEGINWHILE block ENDWHILE;
+while_block: NEWLINE* BEGINWHILE NEWLINE* block NEWLINE* ENDWHILE NEWLINE*;
 
 block: statement*;
 
