@@ -91,20 +91,19 @@ scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE*;
 
 
 expression
-    : literal                               # literalExpression
-    | DOLLAR                                # newlineExpression
-    | END                                   # endExpression
-    | expression AMPERSAND expression       # concatExpression
-    | SYMBOL                                # specialCharExpression
-    | unary_operator expression            # unaryExpression
-    | RBRACK expression RBRACK              # bracketExpression
+    : RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
     | expression exponentOp expression      # exponentExpression    
     | expression multOp expression          # multiplicationExpression
     | expression addOp expression           # additionExpression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
-    | boolOp expression                     # notBooleanExpression 
+    | boolOp expression                     # notBooleanExpression
+    | unary_operator expression             # unaryExpression
+    | literal                               # literalExpression
+    | DOLLAR                                # newlineExpression
+    | SYMBOL                                # specialCharExpression
+    | expression AMPERSAND expression       # concatExpression
     | IDENTIFIER                            # identifierExpression
     ;
 
