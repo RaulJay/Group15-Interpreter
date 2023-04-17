@@ -134,15 +134,15 @@ IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
 if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
-condition_block: expression if_block;
+condition_block: expression NEWLINE* if_block;
 
-if_block: BEGINIF block ENDIF;
+if_block: NEWLINE* BEGINIF NEWLINE* block ENDIF NEWLINE*;
 
 while_statement: WHILE expression while_block;
 
 while_block: NEWLINE* BEGINWHILE NEWLINE* block NEWLINE* ENDWHILE NEWLINE*;
 
-block: statement*;
+block: statement NEWLINE+;
 
 
 // Define the lexer rules
