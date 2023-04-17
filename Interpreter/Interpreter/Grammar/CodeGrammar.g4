@@ -86,7 +86,7 @@ declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENT
 
 declaration_statement: data_type declaration NEWLINE*;
 display_statement: DISPLAY':' expression NEWLINE*;
-assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE*;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression NEWLINE*;
 scan_statement: NEWLINE* SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE*;
 
 
