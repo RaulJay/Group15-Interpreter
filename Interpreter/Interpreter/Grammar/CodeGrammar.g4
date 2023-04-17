@@ -140,7 +140,7 @@ if_block: NEWLINE* BEGINIF NEWLINE* block ENDIF NEWLINE*;
 
 while_statement: WHILE expression while_block;
 
-while_block: NEWLINE* BEGINWHILE NEWLINE* block NEWLINE* ENDWHILE NEWLINE*;
+while_block: NEWLINE* BEGINWHILE NEWLINE* block* NEWLINE* ENDWHILE NEWLINE*;
 
 block: statement NEWLINE+;
 
