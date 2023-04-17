@@ -93,13 +93,13 @@ scan_statement: NEWLINE* SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE*;
 expression
     : RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
+    | unary_operator expression             # unaryExpression
     | expression exponentOp expression      # exponentExpression    
     | expression multOp expression          # multiplicationExpression
     | expression addOp expression           # additionExpression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
     | boolOp expression                     # notBooleanExpression
-    | unary_operator expression             # unaryExpression
     | literal                               # literalExpression
     | DOLLAR                                # newlineExpression
     | SYMBOL                                # specialCharExpression
@@ -136,13 +136,13 @@ if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
 condition_block: expression NEWLINE* if_block;
 
-if_block: NEWLINE* BEGINIF NEWLINE* block ENDIF NEWLINE*;
+if_block: NEWLINE* BEGINIF NEWLINE* block NEWLINE* ENDIF NEWLINE*;
 
 while_statement: WHILE expression while_block;
 
 while_block: NEWLINE* BEGINWHILE NEWLINE* block* NEWLINE* ENDWHILE NEWLINE*;
 
-block: statement NEWLINE+;
+block: (statement | expression) NEWLINE+;
 
 
 // Define the lexer rules
