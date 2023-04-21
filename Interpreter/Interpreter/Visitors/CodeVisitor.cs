@@ -58,6 +58,7 @@ namespace Interpreter.Visitors
         {
             String varName;
             // Extract variable data type
+
             var type = Visit(context.data_type()) as Type;
 
             var varNames = context.declaration().IDENTIFIER();
@@ -220,16 +221,7 @@ namespace Interpreter.Visitors
                 }
             }
 
-            bool allNull = varNames.All(v => Variables[v.GetText()].Value == null);
-            if (allNull == false)
-            {
-                foreach (var name in varNames)
-                {
-                    if (Variables[name.GetText()].Value != null) SemanticErrorHandler.ScanErrorNotNull(context.GetText(), name.GetText());
-                }
-            }
-
-            String[] inputs = Console.ReadLine()!.Split(',');
+            string[] inputs = Console.ReadLine()!.Split(',');
 
             bool equalLength = (varNames.Length == inputs.Length);
             if (equalLength == false) SemanticErrorHandler.ScanErrorNotEqualLength(context.GetText(), inputs.Length, varNames.Length);

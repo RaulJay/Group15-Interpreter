@@ -64,16 +64,15 @@ TRUE: 'TRUE';
 WHILE: 'WHILE';
 
 // Token Skips and Whitespaces
-WHITESPACE: [\t\r\n]+ -> skip;
+WHITESPACE: [\t\r]+ -> skip;
 COMMENT: '#' ~[\r\n]* -> skip;
 NEWLINE: '\r'? '\n'| '\r';
 
 // Define the grammar rules parent / root
-code: NEWLINE? BEGIN NEWLINE? statement* NEWLINE? END NEWLINE? EOF;
+code: NEWLINE* BEGIN NEWLINE* (declaration_statement NEWLINE+)* (statement NEWLINE+)* END NEWLINE* EOF;
 
 statement
-        : declaration_statement
-        | assignment_statement
+        : assignment_statement
         | display_statement
         | scan_statement
         | if_statement
@@ -83,30 +82,29 @@ statement
 
 data_type: INT | CHAR | BOOL | FLOAT | STRING;
 
-declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)* ;
+declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENTIFIER (ASSIGN expression)?)*;
 
-declaration_statement: data_type declaration NEWLINE?;
-display_statement: DISPLAY':' expression NEWLINE?;
-assignment_statement: (IDENTIFIER ASSIGN)+ expression? NEWLINE?;
-scan_statement: SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE?;
+declaration_statement: data_type declaration NEWLINE*;
+display_statement: DISPLAY':' expression NEWLINE*;
+assignment_statement: (IDENTIFIER ASSIGN)+ expression NEWLINE*;
+scan_statement: NEWLINE* SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE*;
 
 
 expression
-    : literal                               # literalExpression
-    | DOLLAR                                # newlineExpression
-    | END                                   # endExpression
-    | IDENTIFIER                            # identifierExpression
-    | expression AMPERSAND expression       # concatExpression
-    | SYMBOL                                # specialCharExpression
-    | unary_operator expression            # unaryExpression
-    | RBRACK expression RBRACK              # bracketExpression
+    : RBRACK expression RBRACK              # bracketExpression
     | LPAREN expression RPAREN              # parenthesizeExpression
+    | unary_operator expression             # unaryExpression
     | expression exponentOp expression      # exponentExpression    
     | expression multOp expression          # multiplicationExpression
     | expression addOp expression           # additionExpression
     | expression compareOp expression       # comparisonExpression
     | expression boolOp expression          # booleanExpression 
-    | boolOp expression                     # notBooleanExpression 
+    | boolOp expression                     # notBooleanExpression
+    | literal                               # literalExpression
+    | DOLLAR                                # newlineExpression
+    | SYMBOL                                # specialCharExpression
+    | expression AMPERSAND expression       # concatExpression
+    | IDENTIFIER                            # identifierExpression
     | array                                 # arrayExpression
     ;
 
@@ -139,15 +137,15 @@ IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
 if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
-condition_block: expression if_block;
+condition_block: expression NEWLINE* if_block;
 
-if_block: BEGINIF block ENDIF;
+if_block: NEWLINE* BEGINIF NEWLINE* block NEWLINE* ENDIF NEWLINE*;
 
 while_statement: WHILE expression while_block;
 
-while_block: BEGINWHILE block ENDWHILE;
+while_block: NEWLINE* BEGINWHILE NEWLINE* block* NEWLINE* ENDWHILE NEWLINE*;
 
-block: statement*;
+block: (statement | expression) NEWLINE+;
 
 
 // Define the lexer rules
