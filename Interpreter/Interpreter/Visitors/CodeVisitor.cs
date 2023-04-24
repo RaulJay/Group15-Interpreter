@@ -578,6 +578,15 @@ namespace Interpreter.Visitors
 
         public override object VisitFor_statement([NotNull] CodeGrammarParser.For_statementContext context)
         {
+            /// var val == the initilized number of the for loop i = 0
+            /// var condition is the condition of the for loop  i < 10
+            /// var update is the updater of the for loop i++
+            /// Pseudocode will be creating a for loop that initialize the val
+            /// and then check the condition if it is true then it will execute 
+            /// the statement and then update the value of the val.
+            /// 
+            /// creating a new for loop that will be used in the interpreter
+            /// 
             var val = context.declaration_statement().declaration().expression(0).GetText();
             var condition = context.expression(0).GetText();
             var update = context.expression(1).GetText();
