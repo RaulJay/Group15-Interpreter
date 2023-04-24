@@ -167,7 +167,7 @@ namespace Interpreter.Visitors
 
                 Variables[i.GetText()].Value = expression;
             }
-
+            
             return new object();
         }
         /// <summary>
@@ -573,6 +573,17 @@ namespace Interpreter.Visitors
                 value = Visit(context.expression());
             }
 
+            return new object();
+        }
+
+        public override object VisitFor_statement([NotNull] CodeGrammarParser.For_statementContext context)
+        {
+            var val = context.declaration_statement().declaration().expression(0).GetText();
+            var condition = context.expression(0).GetText();
+            var update = context.expression(1).GetText();
+
+            for (int i = int.Parse(val);  ; )
+                Visit(context.statement());
             return new object();
         }
     }

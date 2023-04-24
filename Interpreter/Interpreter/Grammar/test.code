@@ -1,12 +1,7 @@
 ﻿BEGIN CODE
-INT a=100, b=200, c=300, x=0 
-BOOL d="TRUE"
-WHILE (x < 5) 
-BEGIN WHILE 
-    IF (x % 2 == 0)
-    BEGIN IF
-        DISPLAY: x & $
-    END IF
-    ++x
-END WHILE
+INT a = 1
+FOR (INT x= 0; x < 10; x + 1)
+BEGIN FOR 
+    DISPLAY: x
+END FOR
 END CODE
