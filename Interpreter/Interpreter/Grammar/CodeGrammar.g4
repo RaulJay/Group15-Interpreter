@@ -146,7 +146,9 @@ while_statement: WHILE expression while_block;
 
 while_block: NEWLINE* BEGINWHILE NEWLINE* block* NEWLINE* ENDWHILE NEWLINE*;
 
-for_statement: FOR LPAREN declaration_statement ';' expression ';' expression RPAREN NEWLINE? BEGINFOR NEWLINE? statement NEWLINE? ENDFOR;
+for_statement: FOR LPAREN assignment_statement ';' expression ';' unary_statement RPAREN NEWLINE+ BEGINFOR NEWLINE+ block* NEWLINE* ENDFOR NEWLINE*;
+
+unary_statement = unary_operator expression
 
 block: (statement | expression) NEWLINE+;
 

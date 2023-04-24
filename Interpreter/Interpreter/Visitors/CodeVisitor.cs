@@ -587,13 +587,22 @@ namespace Interpreter.Visitors
             /// 
             /// creating a new for loop that will be used in the interpreter
             /// change lng if dili logical hahahaha
-            var val = context.declaration_statement().declaration().expression(0).GetText();
-            var condition = context.expression(0).GetText();
-            var update = context.expression(1).GetText();
+            //var val = Visit(context.assignment_statement());
+            //var condition = context.expression(0).GetText();
+            //var update = context.expression(1).GetText();
 
-            for (int i = int.Parse(val);  ; )
-                Visit(context.statement());
-            return new object();
+            //for (int i = int.Parse(val); ;)
+            //    Visit(context.statement());
+            //return new object();
+
+            Visit(context.assignment_statement());
+            Visit(context.expression());
+            Visit(context.unary_statement());
+            foreach (var block in context.block())
+            {
+                Visit(block);
+            }
+            return null;
         }
     }
 }
