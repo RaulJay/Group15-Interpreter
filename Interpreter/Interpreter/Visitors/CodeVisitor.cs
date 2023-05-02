@@ -595,7 +595,7 @@ namespace Interpreter.Visitors
             //    Visit(context.statement());
             //return new object();
 
-            var variable = Visit(context.assignment_statement());
+            Visit(context.assignment_statement());
             while(true)
             {
                 bool condition = (bool)Visit(context.forCondition);
@@ -607,7 +607,7 @@ namespace Interpreter.Visitors
 
                 Visit(context.for_block());
 
-                variable = Visit(context.unary);
+                Visit(context.unary);
             }
 
             return null;
