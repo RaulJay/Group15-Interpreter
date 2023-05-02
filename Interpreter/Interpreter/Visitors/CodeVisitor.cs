@@ -595,13 +595,21 @@ namespace Interpreter.Visitors
             //    Visit(context.statement());
             //return new object();
 
-            Visit(context.assignment_statement());
-            Visit(context.expression());
-            Visit(context.unary_statement());
-            foreach (var block in context.block())
+            var variable = Visit(context.assignment_statement());
+            while(true)
             {
-                Visit(block);
+                bool condition = (bool)Visit(context.forCondition);
+
+                if(!condition)
+                {
+                    break;
+                }
+
+                Visit(context.for_block());
+
+                variable = Visit(context.unary);
             }
+
             return null;
         }
     }

@@ -146,12 +146,11 @@ while_statement: WHILE expression while_block;
 
 while_block: NEWLINE* BEGINWHILE NEWLINE* block* NEWLINE* ENDWHILE NEWLINE*;
 
-for_statement: FOR LPAREN assignment_statement ';' expression ';' unary_statement RPAREN NEWLINE+ BEGINFOR NEWLINE+ block* NEWLINE* ENDFOR NEWLINE*;
+for_statement: FOR LPAREN assignment_statement ';' forCondition=expression ';' unary=expression RPAREN for_block;
 
-unary_statement = unary_operator expression
+for_block: NEWLINE+ BEGINFOR NEWLINE+ block* NEWLINE* ENDFOR NEWLINE*;
 
 block: (statement | expression) NEWLINE+;
-
 
 // Define the lexer rules
 INT_LITERAL: DIGIT+;
