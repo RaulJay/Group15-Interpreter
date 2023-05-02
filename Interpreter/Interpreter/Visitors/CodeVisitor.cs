@@ -595,9 +595,19 @@ namespace Interpreter.Visitors
             //    Visit(context.statement());
             //return new object();
 
+            int currIterations = 0;
+            int maxIterations = 1000;
+
             Visit(context.assignment_statement());
+
             while(true)
             {
+                currIterations++;
+                if (currIterations > maxIterations)
+                {
+                    SemanticErrorHandler.ForInfiniteLoop(context.GetText());
+                }
+
                 bool condition = (bool)Visit(context.forCondition);
 
                 if(!condition)

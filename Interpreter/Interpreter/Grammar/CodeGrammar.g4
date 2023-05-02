@@ -140,7 +140,7 @@ if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
 condition_block: expression NEWLINE* if_block;
 
-if_block: NEWLINE* BEGINIF NEWLINE* block NEWLINE* ENDIF NEWLINE*;
+if_block: NEWLINE* BEGINIF NEWLINE* block* NEWLINE* ENDIF NEWLINE*;
 
 while_statement: WHILE expression while_block;
 

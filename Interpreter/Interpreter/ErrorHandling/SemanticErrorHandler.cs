@@ -207,5 +207,17 @@ namespace Interpreter.ErrorHandling
             Console.Error.WriteLine($"Possible infinite loop detected");
             Environment.Exit(400);
         }
+
+        /// <summary>
+        /// Error Handling for For Loop Statement with possible infinite loop
+        /// </summary>
+        /// <param name="text">Text to find in file</param>
+        public static void ForInfiniteLoop(string text)
+        {
+            int location = CodeLine(text);
+            Console.Error.WriteLine($"Semantic Error: For Loop Statement at line {location}");
+            Console.Error.WriteLine($"Possible infinite loop detected");
+            Environment.Exit(400);
+        }
     }
 }

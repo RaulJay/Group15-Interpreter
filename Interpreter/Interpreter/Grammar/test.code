@@ -1,7 +1,7 @@
 ﻿BEGIN CODE
 INT a=100, b=200, c=300, x=1, y
 BOOL d="TRUE"
-FOR (y = 0; y < 5; y = y+1)
+FOR (y = 0; y < 5; y = y)
 BEGIN FOR
 	DISPLAY: y
 END FOR
