@@ -150,7 +150,7 @@ for_statement: FOR LPAREN assignment_statement ';' forCondition=expression ';' u
 
 for_block: NEWLINE+ BEGINFOR NEWLINE+ block* NEWLINE* ENDFOR NEWLINE*;
 
-block: (statement | expression) NEWLINE+;
+block: statement NEWLINE+;
 
 // Define the lexer rules
 INT_LITERAL: DIGIT+;
