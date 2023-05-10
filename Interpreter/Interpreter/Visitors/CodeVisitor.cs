@@ -167,7 +167,7 @@ namespace Interpreter.Visitors
 
                 Variables[i.GetText()].Value = expression;
             }
-
+            
             return new object();
         }
         /// <summary>
@@ -574,6 +574,53 @@ namespace Interpreter.Visitors
             }
 
             return new object();
+        }
+
+        public override object VisitFor_statement([NotNull] CodeGrammarParser.For_statementContext context)
+        {
+            /// var val == the initilized number of the for loop i = 0
+            /// var condition is the condition of the for loop  i < 10
+            /// var update is the updater of the for loop i++
+            /// Pseudocode will be creating a for loop that initialize the val
+            /// and then check the condition if it is true then it will execute 
+            /// the statement and then update the value of the val.
+            /// 
+            /// creating a new for loop that will be used in the interpreter
+            /// change lng if dili logical hahahaha
+            //var val = Visit(context.assignment_statement());
+            //var condition = context.expression(0).GetText();
+            //var update = context.expression(1).GetText();
+
+            //for (int i = int.Parse(val); ;)
+            //    Visit(context.statement());
+            //return new object();
+
+            int currIterations = 0;
+            int maxIterations = 1000;
+
+            Visit(context.assignment_statement());
+
+            while(true)
+            {
+                currIterations++;
+                if (currIterations > maxIterations)
+                {
+                    SemanticErrorHandler.ForInfiniteLoop(context.GetText());
+                }
+
+                bool condition = (bool)Visit(context.forCondition);
+
+                if(!condition)
+                {
+                    break;
+                }
+
+                Visit(context.for_block());
+
+                Visit(context.unary);
+            }
+
+            return null;
         }
     }
 }

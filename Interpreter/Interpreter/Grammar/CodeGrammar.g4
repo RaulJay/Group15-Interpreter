@@ -6,11 +6,13 @@
 BEGIN: 'BEGIN CODE';
 BEGINIF: 'BEGIN IF';
 BEGINWHILE: 'BEGIN WHILE';
+BEGINFOR: 'BEGIN FOR';
 
 // End Statements
 END: 'END CODE';
 ENDIF: 'END IF';
 ENDWHILE: 'END WHILE';
+ENDFOR: 'END FOR';
 
 // Input Output Statements
 DISPLAY: 'DISPLAY';
@@ -62,6 +64,7 @@ IF: 'IF';
 FALSE: 'FALSE';
 TRUE: 'TRUE';
 WHILE: 'WHILE';
+FOR: 'FOR';
 
 // Token Skips and Whitespaces
 WHITESPACE: [\t\r]+ -> skip;
@@ -77,6 +80,7 @@ statement
         | scan_statement
         | if_statement
         | while_statement
+        | for_statement
         | COMMENT
         ;
 
@@ -86,7 +90,7 @@ declaration: IDENTIFIER ((ASSIGN IDENTIFIER)* (ASSIGN expression))? (COMMA IDENT
 
 declaration_statement: data_type declaration NEWLINE*;
 display_statement: DISPLAY':' expression NEWLINE*;
-assignment_statement: (IDENTIFIER ASSIGN)+ expression NEWLINE*;
+assignment_statement: (IDENTIFIER ASSIGN) + expression NEWLINE*;
 scan_statement: NEWLINE* SCAN COLON IDENTIFIER (COMMA IDENTIFIER)* NEWLINE*;
 
 
@@ -136,14 +140,17 @@ if_statement: IF condition_block (ELSE IF condition_block)* (ELSE if_block)?;
 
 condition_block: expression NEWLINE* if_block;
 
-if_block: NEWLINE* BEGINIF NEWLINE* block NEWLINE* ENDIF NEWLINE*;
+if_block: NEWLINE* BEGINIF NEWLINE* block* NEWLINE* ENDIF NEWLINE*;
 
 while_statement: WHILE expression while_block;
 
 while_block: NEWLINE* BEGINWHILE NEWLINE* block* NEWLINE* ENDWHILE NEWLINE*;
 
-block: (statement | expression) NEWLINE+;
+for_statement: FOR LPAREN assignment_statement ';' forCondition=expression ';' unary=statement RPAREN for_block;
 
+for_block: NEWLINE+ BEGINFOR NEWLINE+ block* NEWLINE* ENDFOR NEWLINE*;
+
+block: statement NEWLINE+;
 
 // Define the lexer rules
 INT_LITERAL: DIGIT+;
